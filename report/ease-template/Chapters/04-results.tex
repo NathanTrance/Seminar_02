@@ -12,8 +12,7 @@ and 3{,}005 benign packages, and a test partition of 276 malicious and 753
 benign packages (1{,}029 in total). Each entry contains the package name,
 file list, and the raw \texttt{setup.py} content; test entries additionally
 carry an AST-derived textual behavior description. Nine malicious test
-entries whose \texttt{setup.py} could not be extracted (content string
-\texttt{"Not Available"}) are excluded from evaluation, leaving 1{,}020 test
+entries whose \texttt{setup.py} could not be extracted are excluded from evaluation, leaving 1{,}020 test
 samples (267 malicious, 753 benign). The training partition serves as the
 knowledge base; the test partition is never used for retrieval. The malicious
 class is dominated by typosquatted or squatted packages (e.g.,
