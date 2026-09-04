@@ -54,23 +54,23 @@ Table~\ref{tab:main-results} reports classification performance. Three
 findings stand out.
 
 \begin{table}[!ht]
-    \caption{Classification results on the benchmark test set (1,020 samples;
-    267 malicious). Coverage is the fraction of samples whose structured
-    response parsed successfully; metrics are computed over parsed samples.
-    Best value per column in bold.}
+    \caption{Classification metrics for the seven compared methods. FPR is the
+    false-positive rate. Best value per column in bold.}
     \label{tab:main-results}
     \centering
-    \begin{tabular}{lrrrrrrr}
+    \begin{tabular}{lccc|ccc|cc}
         \toprule
-        \textbf{Method} & \textbf{Mal. P} & \textbf{Mal. R} & \textbf{F1} & \textbf{Ben. F1} & \textbf{BAcc} & \textbf{FPR} & \textbf{Cov.} \\
+        \textbf{Method} & \multicolumn{3}{c}{\textbf{Malicious}} & \multicolumn{3}{c}{\textbf{Benign}} & \multicolumn{2}{c}{\textbf{Overall}} \\
+        \cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-9}
+        & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} & \textbf{BAcc} & \textbf{FPR} \\
         \midrule
-        No RAG           & \textbf{1.000} & 0.798 & 0.888 & 0.973 & 0.899 & \textbf{0.0\%} & 0.935 \\
-        Dense            & 0.972 & \textbf{0.972} & \textbf{0.972} & \textbf{0.991} & \textbf{0.981} & 0.9\% & 0.975 \\
-        BM25             & 0.964 & \textbf{0.972} & 0.968 & 0.989 & 0.980 & 1.2\% & 0.975 \\
-        Hybrid           & 0.976 & 0.964 & 0.970 & 0.990 & 0.978 & 0.8\% & 0.976 \\
-        Behavior         & \textbf{1.000} & 0.782 & 0.878 & 0.964 & 0.891 & \textbf{0.0\%} & \textbf{0.977} \\
-        Contrastive      & 0.996 & 0.948 & 0.971 & 0.990 & 0.973 & \textbf{0.1\%} & 0.927 \\
-        Beh.\ + Contr.   & \textbf{1.000} & 0.788 & 0.881 & 0.966 & 0.894 & \textbf{0.0\%} & 0.974 \\
+        No RAG           & \textbf{1.000} & 0.798 & 0.888 & 0.948 & \textbf{1.000} & 0.973 & 0.899 & \textbf{0.0\%} \\
+        Dense            & 0.972 & \textbf{0.972} & \textbf{0.972} & \textbf{0.991} & 0.991 & \textbf{0.991} & \textbf{0.981} & 0.9\% \\
+        BM25             & 0.964 & \textbf{0.972} & 0.968 & \textbf{0.991} & 0.988 & 0.989 & 0.980 & 1.2\% \\
+        Hybrid           & 0.976 & 0.964 & 0.970 & 0.988 & 0.992 & 0.990 & 0.978 & 0.8\% \\
+        Behavior         & \textbf{1.000} & 0.782 & 0.878 & 0.931 & \textbf{1.000} & 0.964 & 0.891 & \textbf{0.0\%} \\
+        Contrastive      & 0.996 & 0.948 & 0.971 & 0.982 & 0.999 & 0.990 & 0.973 & \textbf{0.1\%} \\
+        Beh.\ + Contr.   & \textbf{1.000} & 0.788 & 0.881 & 0.933 & \textbf{1.000} & 0.966 & 0.894 & \textbf{0.0\%} \\
         \bottomrule
     \end{tabular}
 \end{table}
