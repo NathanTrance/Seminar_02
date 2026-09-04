@@ -8,13 +8,13 @@ compared a zero-shot baseline against dense, sparse, hybrid, behavior-based,
 and contrastive retrieval.
 
 Three conclusions appear robust. Any code-level retrieval is a large win,
-lifting malicious-class F1 from 0.888 to 0.968--0.972, mostly through recall.
-The mechanism matters surprisingly little: plain BM25 matches a 4B embedding
-retriever within 0.4 F1 points, so sparse retrieval is the pragmatic default.
-And contrastive retrieval is a precision dial worth turning: retrieving
-benign counterexamples cuts the false-positive rate to 0.1\% at 0.948
-recall. Conversely, reducing queries to AST behavior summaries is
-counterproductive (F1 0.878), demonstrating that signal loss in query
+lifting malicious-class F1 from 0.888 to 0.97, mostly through recall. The
+mechanism matters surprisingly little: plain BM25 matches a 4B embedding
+retriever within 0.4 F1 points, so sparse retrieval is a strong, low-cost
+default. And contrastive retrieval offers a favorable precision/recall
+trade-off: retrieving benign counterexamples cuts the false-positive rate to
+0.1\% at 0.948 recall. Conversely, reducing queries to AST behavior summaries
+is counterproductive (F1 0.878), demonstrating that signal loss in query
 construction, not retrieval per se, is where methods fail.
 
 We also documented the residual failures that no retrieval over

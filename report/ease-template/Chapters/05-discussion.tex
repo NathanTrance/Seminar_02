@@ -12,21 +12,20 @@ attribute this to the structure of the problem: passages of malicious source
 are frequently near-duplicates (copy-pasted droppers, shared obfuscation
 snippets), which both lexical and semantic similarity recover equally well.
 
-\paragraph{Sparse retrieval is the pragmatic default.} BM25 has no
+\paragraph{Sparse retrieval is a strong, low-cost baseline.} BM25 has no
 embedding model, no GPU, and no index-approximation tuning, yet yields 0.968
-F1 vs.\ 0.972 for a 4B embedding model. For researchers and practitioners
-who want a replication-friendly pipeline, we recommend starting with BM25
-and upgrading only if a failure analysis shows semantically-paraphrased
-attacks slipping through.
+F1 vs.\ 0.972 for a 4B embedding model. For replication-friendly pipelines,
+we recommend starting with BM25 and upgrading only if a failure analysis
+shows semantically-paraphrased attacks slipping through.
 
-\paragraph{Contrastive retrieval offers a tunable precision knob.}
-Retrieving malicious examples \emph{only} biases the model toward positives;
-adding retrieved benign look-alikes lets it weigh counterevidence. The 0.1\%
-FPR of E5 is attractive when analysts must triage alarms, and the mechanism
-is orthogonal to retriever choice---a practitioner may obtain the same effect
-with BM25 over both pools.
+\paragraph{Contrastive retrieval offers a favorable precision/recall
+trade-off.} Retrieving malicious examples \emph{only} biases the model toward
+positives; adding retrieved benign look-alikes lets it weigh counterevidence.
+The 0.1\% FPR of E5 is attractive when analysts must triage alarms, and the
+mechanism is orthogonal to retriever choice---a practitioner may obtain the
+same effect with BM25 over both pools.
 
-\paragraph{Behavior summaries cripple the signal.} The AST-based
+\paragraph{Behavior summaries reduce the signal.} The AST-based
 representations tested here (E4, E6) discard too much (identifiers, URL
 structure, file names, control flow). Their recall regresses to no-RAG
 levels while their recall-adjusted F1 falls below the baseline, which we

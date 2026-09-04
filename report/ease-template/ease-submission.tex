@@ -25,25 +25,23 @@
 \begin{abstract}
 Large language models (LLMs) can inspect source code for malicious behavior,
 but they miss subtle attacks such as obfuscated droppers and typosquats whose
-installation scripts look innocuous. Retrieval-augmented generation (RAG)
-has been proposed as the remedy, yet prior work couples retrieval to
-particular knowledge sources and mechanisms, leaving it unclear how much of
-the benefit comes from retrieval itself and how much from how retrieval is
-done. We isolate retrieval strategy through a controlled comparison of seven
+installation scripts look innocuous. Retrieval-augmented generation (RAG) has
+been proposed as the remedy, yet prior work couples retrieval to particular
+knowledge sources and mechanisms, leaving it unclear how much of the benefit
+comes from retrieval itself and how much from how retrieval is done. We
+isolate retrieval strategy through a controlled comparison of seven
 pipelines---a zero-shot baseline and six RAG variants (dense, sparse BM25,
 hybrid fusion, behavior-summary, contrastive dual-pool, and their
 combination)---with a fixed generator (Llama-3.1-8B-Instruct), a fixed
-code-only knowledge base of 4,163 training packages, and fixed prompting,
-evaluated on 1,020 test packages from the EASE 2025 dataset. Findings: any
-code-level retrieval raises malicious-class F1 from 0.888 to 0.968--0.972, a
-recall gain of 17 points; sparse BM25 matches a 4B embedding retriever within
-0.4 F1 points, and hybrid fusion adds nothing; contrastive retrieval lowers
-the false-positive rate to 0.1\% (0.948 recall, 0.996 precision); and
-converting queries to AST behavior summaries is actively harmful (F1 0.878).
-We further analyze the samples that no method detects (metadata-cloned
-typosquats) and use a static-grounding proxy to measure explanation
-faithfulness, showing that retrieval also reduces unsupported behavior claims.
-Our replication package publishes per-sample outputs and evaluation scripts.
+code-only knowledge base, and fixed prompting, evaluated on 1{,}020 test
+packages from the EASE 2025 dataset. Code-level retrieval raises
+malicious-class F1 from 0.888 to 0.97, driven by recall. Sparse BM25 matches
+a 4B embedding retriever within 0.4 F1 points, contrastive retrieval lowers
+the false-positive rate to 0.1\% at 0.948 recall, and converting queries to
+AST behavior summaries is harmful (F1 0.878). We also analyze the samples
+that no method detects (metadata-cloned typosquats) and use a static-grounding
+proxy to measure explanation faithfulness, showing that retrieval reduces
+unsupported behavior claims.
 \end{abstract}
 
 \begin{CCSXML}

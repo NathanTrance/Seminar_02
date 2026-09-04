@@ -41,15 +41,14 @@ findings stand out.
     \end{tabular}
 \end{table}
 
-\paragraph{Finding 1: retrieval helps, and code-level retrieval helps a lot.}
+\paragraph{Finding 1: retrieval improves detection.}
 The zero-shot baseline (E0) achieves F1~0.888 with perfect precision but
 misses roughly one in five malicious samples (recall 0.798). Dense retrieval
-(E1) lifts malicious recall to 0.972 and F1 to 0.972 (+8.4 points) while
-benchmarking near-perfect balanced accuracy (0.981); BM25 (E2) and hybrid
-(E3) essentially match this level (F1 0.968--0.970). This confirms that
-retrieval is useful for malicious-code detection, and shows that the gain
-comes almost entirely from exposing the model to similar \emph{code} rather
-than from any particular similarity mechanism.
+(E1) lifts malicious recall to 0.972 and F1 to 0.972 (+8.4 points) with a
+balanced accuracy of 0.981; BM25 (E2) and hybrid (E3) essentially match this
+level (F1 0.968--0.970). Retrieval is thus useful for malicious-code
+detection, and the gain comes almost entirely from exposing the model to
+similar \emph{code}, regardless of the similarity mechanism.
 
 \paragraph{Finding 2: sparse retrieval is not worse than dense retrieval.}
 BM25 (0.968) is within 0.4 F1 points of dense (0.972) at a fraction of the
