@@ -22,11 +22,10 @@ code frequently hides its malicious behavior in the \texttt{setup.py} entry
 point, making the task representative of real-world supply-chain attacks.
 
 \paragraph{Setup.} All seven methods (Section~\ref{sec:retrieval}) are served
-by the same \texttt{Llama-3.1-8B-Instruct} model with identical prompting,
-decoding parameters ($T=0$, 1{,}024 max tokens), and $k=3$ retrieval
-settings, so that the only varying factor is the retrieval strategy. Dense
-indexes use \texttt{Qwen3-Embedding-4B}; BM25 uses Okapi BM25 with a standard
-implementation.
+by the same \texttt{Llama-3.1-8B-Instruct} model with identical prompting
+and decoding settings, and retrieve the top three documents per query, so
+that the only varying factor is the retrieval strategy. Dense indexes use
+\texttt{Qwen3-Embedding-4B}; BM25 uses a standard Okapi implementation.
 
 \paragraph{Metrics.} We report precision, recall, and F1 for the malicious
 class, benign-class F1, macro-F1, balanced accuracy, false-positive rate
