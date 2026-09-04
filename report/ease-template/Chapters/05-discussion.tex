@@ -35,16 +35,16 @@ shows semantically-paraphrased attacks slipping through.
 \paragraph{Contrastive retrieval offers a favorable precision/recall
 trade-off.} Retrieving malicious examples \emph{only} biases the model toward
 positives; adding retrieved benign look-alikes lets it weigh counterevidence.
-The 0.1\% FPR of E5 is attractive when analysts must triage alarms, and the
-mechanism is orthogonal to retriever choice---a practitioner may obtain the
-same effect with BM25 over both pools.
+The 0.1\% FPR of contrastive retrieval is attractive when analysts must
+triage alarms, and the mechanism is orthogonal to retriever choice---a
+practitioner may obtain the same effect with BM25 over both pools.
 
 \paragraph{Behavior summaries reduce the signal.} The AST-based
-representations tested here (E4, E6) discard too much (identifiers, URL
-structure, file names, control flow). Their recall regresses to no-RAG
-levels while their recall-adjusted F1 falls below the baseline, which we
-interpret as evidence that queries should stay close to raw code whenever
-the generator can accept it.
+representations tested here (behavior-based methods) discard too much
+(identifiers, URL structure, file names, control flow). Their recall
+regresses to no-RAG levels while their recall-adjusted F1 falls below the
+baseline, which we interpret as evidence that queries should stay close to
+raw code whenever the generator can accept it.
 
 \subsection{Limitations}
 \label{sec:limitations}
