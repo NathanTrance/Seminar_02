@@ -1,6 +1,24 @@
 \section{Related Work}
 \label{sec:related-work}
 
+\subsection{Malware Detection Techniques}
+\label{sec:malware-techniques}
+
+Malware detection has traditionally been approached through static,
+dynamic, and hybrid analysis~\cite{singh2021survey}. Static analysis
+examines code without executing it, extracting features such as opcode
+sequences, control-flow graphs, and file metadata to identify known
+malicious patterns. Dynamic analysis monitors behavior in controlled
+environments, capturing runtime information such as API and system-call
+sequences, network traffic, and file modifications that static analysis may
+miss, particularly under obfuscation. Hybrid approaches combine both to
+leverage their complementary strengths. Classical machine-learning
+classifiers over hand-crafted features---support vector machines, decision
+trees, and ensemble methods---remain competitive when feature extraction is
+effective~\cite{singh2021survey}. More recently, LLM-based methods have been
+applied to analyze code and its descriptive metadata, capturing subtle,
+context-rich patterns of malicious behavior~\cite{ease2025rag}.
+
 \subsection{Supply-Chain Attacks on Package Registries}
 \label{sec:supply-chain}
 
@@ -66,16 +84,4 @@ tried~\cite{ease2025rag, crag2024}, yet---to our knowledge---no prior study
 has systematically compared dense, sparse, hybrid, behavior-based, and
 contrastive retrieval configurations on the same malicious-package benchmark
 with the same generator. This is the gap we address.
-
-\subsection{Summary}
-\label{sec:related-summary}
-
-In summary, prior work (i)~established the supply-chain threat and the
-datasets we build on, (ii)~showed that LLMs augmented with retrieved
-knowledge are promising but not sufficient for malicious-package detection,
-and (iii)~provides the retrieval toolbox (dense, sparse, fusion). Our
-contribution is a controlled, seven-condition comparison that isolates
-retrieval strategy, together with faithfulness-oriented evaluation of the
-model's behavior claims, on the same data and model family used by
-Ibiyo et al.~\cite{ease2025rag}.
 \endinput
