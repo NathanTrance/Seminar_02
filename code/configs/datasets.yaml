@@ -1,0 +1,15 @@
+datasets:
+  ease_rag:
+    adapter: EaseRagDataset
+    path: data/raw/ease_rag
+    description: "EASE 2025 RAG paper replication dataset (MalBenignDataset.xlsx)"
+
+  lamps_d1:
+    adapter: LampsD1Dataset
+    path: data/raw/lamps_d1
+    description: "LAMPS D1 balanced setup.py classification dataset"
+
+  lamps_d2:
+    adapter: LampsD2Dataset
+    path: data/raw/lamps_d2
+    description: "LAMPS D2 multi-file PyPI evaluation dataset"

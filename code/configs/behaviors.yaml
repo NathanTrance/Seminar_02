@@ -1,0 +1,13 @@
+behaviors:
+  - shell_execution
+  - process_creation
+  - network_access
+  - file_write
+  - file_delete
+  - dynamic_execution
+  - environment_access
+  - base64_decode
+  - obfuscation
+  - persistence
+  - remote_download
+  - credential_access

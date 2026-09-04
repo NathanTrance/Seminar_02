@@ -1,0 +1,48 @@
+# Full experiment matrix
+# 7 methods × 3 models × 3 datasets = 63 cells (or 4 × 3 × 3 = 36 with core four)
+# Stage A uses one model + one dataset dev split for ablation
+# Stage B freezes settings across all model×dataset combinations
+
+experiments:
+  # Stage A: retrieval-design ablation
+  - experiment_id: ablation_topk
+    stage: A
+    description: "Ablate top-k on development subset"
+    dataset: ease_rag
+    split: dev
+    model: qwen3_coder_30b
+    methods:
+      - dense
+      - bm25
+      - hybrid
+      - behavior
+      - contrastive
+      - behavior_contrastive
+    retrieval:
+      top_k_values: [1, 3, 5]
+
+  # Stage B: frozen main evaluation — core four methods
+  - experiment_id: main_eval
+    stage: B
+    description: "Frozen main evaluation"
+    methods:
+      - no_rag
+      - dense
+      - behavior
+      - behavior_contrastive
+    models:
+      - qwen3_coder_30b
+      - llama33_70b
+      - gpt_oss_20b
+    datasets:
+      - ease_rag
+      - lamps_d1
+    retrieval:
+      enabled: true
+      top_k_malicious: 3
+      top_k_benign: 3
+      query_representation: raw_code
+    generation:
+      temperature: 0.0
+      max_tokens: 512
+    seed: 42

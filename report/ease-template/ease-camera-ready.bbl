@@ -1,0 +1,91 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{4}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{} and \showURL{}.  The latter does
+%%% not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showURL}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showURL #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+\makeatletter
+\@ifundefined{NAT@parse@date}{}{\let\NAT@parse@date@orig\NAT@parse@date}
+\@ifundefined{NAT@parse@date}{}{\def\NAT@parse@date#1#2#3#4#5#6@@{\NAT@parse@date@orig#1#2#3#4#5#6@@\def\NAT@tempyear{0000}\def\NAT@tempexlab{{?}}\ifx\NAT@year\NAT@tempyear\ifx\NAT@exlab\NAT@tempexlab\def\NAT@date{[n.\,d.]}\else\edef\NAT@date{[n.\,d.]\NAT@exlab}\fi\fi}}
+\makeatother
+
+\bibitem[Abril and Plant(2007)]%
+        {Abril07}
+\bibfield{author}{\bibinfo{person}{Patricia~S. Abril} {and}
+  \bibinfo{person}{Robert Plant}.} \bibinfo{year}{2007}\natexlab{}.
+\newblock \showarticletitle{The patent holder's dilemma: Buy, sell, or troll?}
+\newblock \bibinfo{journal}{\emph{Commun. ACM}} \bibinfo{volume}{50},
+  \bibinfo{number}{1} (\bibinfo{date}{Jan.} \bibinfo{year}{2007}),
+  \bibinfo{pages}{36--44}.
+\newblock
+\href{https://doi.org/10.1145/1188913.1188915}{doi:\nolinkurl{10.1145/1188913.1188915}}
+
+
+\bibitem[Cohen et~al\mbox{.}(2007)]%
+        {Cohen07}
+\bibfield{author}{\bibinfo{person}{Sarah Cohen}, \bibinfo{person}{Werner Nutt},
+  {and} \bibinfo{person}{Yehoshua Sagic}.} \bibinfo{year}{2007}\natexlab{}.
+\newblock \showarticletitle{Deciding equivalances among conjunctive aggregate
+  queries}.
+\newblock \bibinfo{journal}{\emph{J. ACM}} \bibinfo{volume}{54},
+  \bibinfo{number}{2}, Article \bibinfo{articleno}{5} (\bibinfo{date}{April}
+  \bibinfo{year}{2007}), \bibinfo{numpages}{50}~pages.
+\newblock
+\href{https://doi.org/10.1145/1219092.1219093}{doi:\nolinkurl{10.1145/1219092.1219093}}
+
+
+\bibitem[Harel(1979)]%
+        {Harel79}
+\bibfield{author}{\bibinfo{person}{David Harel}.}
+  \bibinfo{year}{1979}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{First-Order Dynamic Logic}}.
+  \bibinfo{series}{Lecture Notes in Computer Science},
+  Vol.~\bibinfo{volume}{68}.
+\newblock \bibinfo{publisher}{Springer-Verlag}, \bibinfo{address}{New York,
+  NY}.
+\newblock
+\href{https://doi.org/10.1007/3-540-09237-4}{doi:\nolinkurl{10.1007/3-540-09237-4}}
+
+
+\bibitem[Kosiur(2001)]%
+        {Kosiur01}
+\bibfield{author}{\bibinfo{person}{David Kosiur}.}
+  \bibinfo{year}{2001}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Understanding Policy-Based Networking}
+  (\bibinfo{edition}{2nd.} ed.)}.
+\newblock \bibinfo{publisher}{Wiley}, \bibinfo{address}{New York, NY}.
+\newblock
+
+
+\end{thebibliography}

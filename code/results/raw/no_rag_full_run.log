@@ -1,0 +1,33 @@
+2026-08-28 12:09:20 [INFO] src.ragsec.datasets.ease_rag: Loaded 276 samples from test_malicious_packages_final.json (label=1)
+2026-08-28 12:09:20 [INFO] src.ragsec.datasets.ease_rag: Loaded 753 samples from test_benign_packages_final.json (label=0)
+2026-08-28 12:09:20 [INFO] __main__: Loaded 1029 samples from ease_rag (test split)
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 1/1029: ease_test_malicious_00000
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 2/1029: ease_test_malicious_00001
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 3/1029: ease_test_malicious_00002
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 4/1029: ease_test_malicious_00003
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 5/1029: ease_test_malicious_00004
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 6/1029: ease_test_malicious_00005
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 7/1029: ease_test_malicious_00006
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 8/1029: ease_test_malicious_00007
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 9/1029: ease_test_malicious_00008
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 10/1029: ease_test_malicious_00009
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 11/1029: ease_test_malicious_00010
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 12/1029: ease_test_malicious_00011
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 13/1029: ease_test_malicious_00012
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 14/1029: ease_test_malicious_00013
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 15/1029: ease_test_malicious_00014
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 16/1029: ease_test_malicious_00015
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 17/1029: ease_test_malicious_00016
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 18/1029: ease_test_malicious_00017
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 19/1029: ease_test_malicious_00018
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 20/1029: ease_test_malicious_00019
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 21/1029: ease_test_malicious_00020
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 22/1029: ease_test_malicious_00021
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 23/1029: ease_test_malicious_00022
+2026-08-28 12:09:20 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 24/1029: ease_test_malicious_00023
+2026-08-28 12:09:23 [INFO] httpx2: HTTP Request: POST https://nhatth2-llama-3-8b-instruct-3-runai-voice-test.runai-inference.cyberspace.vn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-28 12:09:23 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 25/1029: ease_test_malicious_00024
+2026-08-28 12:09:25 [INFO] httpx2: HTTP Request: POST https://nhatth2-llama-3-8b-instruct-3-runai-voice-test.runai-inference.cyberspace.vn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-28 12:09:25 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 26/1029: ease_test_malicious_00025
+2026-08-28 12:09:27 [INFO] httpx2: HTTP Request: POST https://nhatth2-llama-3-8b-instruct-3-runai-voice-test.runai-inference.cyberspace.vn/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-28 12:09:27 [INFO] src.ragsec.experiments.runner: [no_rag_Llama-3.1-8B-Instruct_ease_rag] 27/1029: ease_test_malicious_00026

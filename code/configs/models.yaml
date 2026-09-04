@@ -1,0 +1,7 @@
+models:
+  - id: gpt_oss_20b
+    api_model: gpt-oss-20b
+  - id: qwen3_coder_30b
+    api_model: Qwen/Qwen3-Coder-30B-A3B-Instruct
+  - id: llama33_70b
+    api_model: meta-llama/Llama-3.3-70B-Instruct
