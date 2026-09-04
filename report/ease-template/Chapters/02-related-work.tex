@@ -27,7 +27,7 @@ Recent work applies LLMs to security classification tasks. Studies on
 vulnerability reasoning caution that LLMs remain unreliable on subtle
 security judgments without auxiliary signal~\cite{ullah2024llmsec}. For
 malicious packages specifically, LLMs have been used to detect malware in
-the npm ecosystem~\cite{zahan2024npm}, and the EASE 2025 study---the closest
+the npm ecosystem~\cite{zahan2024npm}, and Ibiyo et al.~\cite{ease2025rag}---the closest
 prior work to ours---evaluated LLMs with zero-shot prompting, RAG, and
 few-shot learning on a dataset of malicious and benign PyPI
 packages~\cite{ease2025rag}. Its knowledge bases were built from YARA rules,
@@ -76,6 +76,6 @@ knowledge are promising but not sufficient for malicious-package detection,
 and (iii)~provides the retrieval toolbox (dense, sparse, fusion). Our
 contribution is a controlled, seven-condition comparison that isolates
 retrieval strategy, together with faithfulness-oriented evaluation of the
-model's behavior claims, on the same data and model family used in the
-EASE 2025 study.
+model's behavior claims, on the same data and model family used by
+Ibiyo et al.~\cite{ease2025rag}.
 \endinput
