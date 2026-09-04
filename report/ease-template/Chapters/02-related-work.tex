@@ -19,15 +19,12 @@ effective~\cite{singh2021survey}. More recently, LLM-based methods have been
 applied to analyze code and its descriptive metadata, capturing subtle,
 context-rich patterns of malicious behavior~\cite{ease2025rag}.
 
-\subsection{Supply-Chain Attacks on Package Registries}
-\label{sec:supply-chain}
-
-Malicious publications in package registries are a well-documented,
-persistent threat. Duan et al.~\cite{duan2021supply} measured hundreds of
-malicious packages across PyPI, npm, and RubyGems, showing that most are
-installed by ordinary users through ordinary \texttt{pip install}-style
-commands, and that name-based imitation (typosquatting) is a dominant attack
-style. Ohm et al.~\cite{ohm2020backstabber} cataloged attack techniques in
+In package registries, the same techniques face a distinctive threat model.
+Duan et al.~\cite{duan2021supply} measured hundreds of malicious packages
+across PyPI, npm, and RubyGems, showing that most are installed by ordinary
+users through ordinary \texttt{pip install}-style commands, and that
+name-based imitation (typosquatting) is a dominant attack style.
+Ohm et al.~\cite{ohm2020backstabber} cataloged attack techniques in
 open-source software supply chains, including injections that trigger at
 package-install time through \texttt{setup.py} hooks. Empirical studies of
 the PyPI ecosystem report that malicious packages persist despite
