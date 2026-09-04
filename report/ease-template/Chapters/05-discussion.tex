@@ -4,6 +4,20 @@
 \subsection{Interpretation of Results}
 \label{sec:interpretation}
 
+\paragraph{Reconciling with the EASE 2025 negative result.} The closest
+prior study reported that RAG did not reliably help LLM-based detection and
+that few-shot learning was more effective~\cite{ease2025rag}. Our findings
+complement, rather than contradict, that result: we show that retrieval
+\emph{can} deliver large gains when the knowledge base is code-only and
+retrieval is matched to the classification granularity (per-file, $k=3$,
+raw-code queries). The prior study's knowledge sources (YARA rules, security
+advisories) describe packages at a different abstraction level than the
+target \texttt{setup.py}, and its single dense mechanism left no way to
+separate retrieval design from retrieval presence. The implication for
+practice is that ``RAG'' is not a single intervention: both the corpus and
+the retrieval strategy need to be chosen deliberately, and our comparison
+provides a first controlled map of that design space.
+
 \paragraph{Retrieval presence matters more than retrieval mechanism.}
 Across dense, sparse, and hybrid variants, malicious recall settles around
 0.96--0.97 versus 0.80 with no retrieval---the decisive factor is that the

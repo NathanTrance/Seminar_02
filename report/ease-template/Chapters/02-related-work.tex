@@ -22,16 +22,19 @@ Recent work applies LLMs to security classification tasks. Studies on
 vulnerability reasoning caution that LLMs remain unreliable on subtle
 security judgments without auxiliary signal~\cite{ullah2024llmsec}. For
 malicious packages specifically, the EASE 2025 study---the closest prior work
-to ours---treated package classification as a zero-shot and retrieval-augmented
-task, evaluating open and proprietary models on a dataset of malicious and
-benign PyPI packages~\cite{ease2025rag}. That study augmented generation with
-knowledge bases built from YARA rules, GitHub security advisories, and
-malicious \texttt{setup.py} examples, and reported both that LLM-only
-detection leaves room for improvement and that retrieved context helps.
+to ours---evaluated LLMs with zero-shot prompting, RAG, and few-shot learning
+on a dataset of malicious and benign PyPI packages~\cite{ease2025rag}. Its
+knowledge bases were built from YARA rules, GitHub security advisories, and
+malicious \texttt{setup.py} examples. A central finding of that study was
+counterintuitive: retrieval augmentation did not reliably help, yielding
+mediocre accuracy, whereas few-shot learning was markedly more effective.
+The study, however, coupled retrieval to its specific knowledge sources and
+a single retrieval mechanism, so it does not separate the effect of
+\emph{whether} to retrieve from \emph{how} retrieval is done.
 A complementary line of work applies multi-agent LLM pipelines to
 package-level evidence such as metadata and behavioral descriptions,
 reporting improvements from aggregating multiple signals (\texttt{LAMPS},
-``Many Hands Make Light Work'')~\cite{lamps2025}. Our work differs in scope
+``Many Hands Make Light Work'')~\cite{lamps2026}. Our work differs in scope
 and design: instead of changing the knowledge source or inventing new
 pipelines, we fix the corpus, the model, and the prompt, and vary only the
 retrieval strategy, which lets us attribute performance differences to

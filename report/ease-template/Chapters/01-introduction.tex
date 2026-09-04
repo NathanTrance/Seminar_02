@@ -17,11 +17,15 @@ obfuscated droppers and typosquats whose installation scripts look
 innocuous~\cite{ease2025rag}. Retrieval-augmented generation (RAG) is a
 natural remedy: before classifying, the model is shown similar examples
 retrieved from a corpus of known malicious packages~\cite{ease2025rag,
-crag2024}. Prior work on RAG for malicious-package detection couples
-retrieval with specific knowledge sources (YARA rules, GitHub security
-advisories) and a single retrieval mechanism, so it remains unclear how much
-of the benefit comes from retrieval itself and how much from how retrieval is
-performed.
+crag2024}. The closest prior study, however, reports a negative result:
+augmenting LLMs with retrieved knowledge bases built from YARA rules,
+GitHub security advisories, and malicious code examples did not reliably
+improve detection, while few-shot learning was markedly more
+effective~\cite{ease2025rag}. That study coupled retrieval to specific
+knowledge sources and a single retrieval mechanism, so it remains unclear
+whether retrieval is fundamentally unhelpful or whether \emph{how} retrieval
+is performed---sparse, dense, hybrid, behavior-based, or contrastive---is
+what determines its value.
 
 In this paper, we compare seven pipelines that differ only in the retrieval
 strategy: no retrieval, dense, sparse (BM25), hybrid fusion, behavior-summary,
