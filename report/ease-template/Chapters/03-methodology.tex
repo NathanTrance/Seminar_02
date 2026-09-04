@@ -4,28 +4,165 @@
 \subsection{Overview}
 \label{sec:method-overview}
 
-Overview of your approach.
+We study whether, and how, retrieval-augmented generation (RAG) improves an
+LLM's ability to detect malicious PyPI packages, by comparing seven
+alternative pipelines~E0--E6 that differ only in the \emph{retrieval strategy}
+they apply before the final classification. At a high level, every pipeline
+(1)~takes the target package's \texttt{setup.py} source as input,
+(2)~builds a query representation from it,
+(3)~optionally retrieves reference examples from a knowledge base of
+previously seen packages,
+(4)~feeds the target together with the retrieved evidence (if any) to an
+instruction-tuned LLM, and
+(5)~asks the model for a structured verdict: malicious or benign, a confidence
+score, security-relevant behaviors with source-line citations, and a rationale.
+Figure~\ref{fig:pipeline} illustrates the pipeline.
 
-\subsection{Method Detail 1}
-\label{sec:method-detail1}
-
-Details of the first part of your method.
-
-\begin{figure}[htbp]
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{Figures/method-overview}
-    \caption{Overview of the proposed method.}
-    \label{fig:method-overview}
-    \Description{Description of the method overview figure for accessibility.}
+    \begin{tikzpicture}[
+        node distance=6mm,
+        box/.style={rectangle, rounded corners=2pt, draw=black!60, fill=gray!10,
+                    minimum height=8mm, align=center, font=\scriptsize,
+                    inner sep=3pt},
+        arr/.style={-{Stealth[length=2.5mm]}, thick, black!70},
+    ]
+    \node[box] (target) {Target package \\ \texttt{setup.py}};
+    \node[box, right=of target] (num) {Line-numbered \\ source};
+    \node[box, below=of num] (beh) {AST behavior \\ summary (E4/E6)};
+    \node[box, right=of num] (ret) {Retriever \\ dense / BM25 / hybrid / contrastive};
+    \node[box, above=of ret] (kb) {Knowledge base \\ mal. + ben. train examples};
+    \node[box, right=of ret] (prompt) {Prompt builder \\ evidence + target};
+    \node[box, right=of prompt] (llm) {LLM \\ (Llama-3.1-8B)};
+    \node[box, right=of llm] (out) {Structured verdict \\ \{label, conf, behaviors\}};
+    \draw[arr] (target) -- (num);
+    \draw[arr] (num) -- (ret);
+    \draw[arr] (num) -- (beh);
+    \draw[arr] (beh) -- (ret);
+    \draw[arr] (kb) -- (ret);
+    \draw[arr] (ret) -- (prompt);
+    \draw[arr] (num) to[out=25, in=155] (prompt);
+    \draw[arr] (prompt) -- (llm);
+    \draw[arr] (llm) -- (out);
+    \end{tikzpicture}
+    \caption{Overview of the evaluated pipelines. All stages are shared across
+    methods except query construction and retrieval (E4/E6 additionally build an
+    AST behavior summary as the query).}
+    \label{fig:pipeline}
+    \Description{Pipeline with target package input, line numbering,
+    optional AST behavior summary, retrieval from a knowledge base, prompt
+    construction, an LLM call, and a structured verdict output.}
 \end{figure}
 
-\subsection{Method Detail 2}
-\label{sec:method-detail2}
+\subsection{Dataset}
+\label{sec:dataset}
 
-Details of the second part of your method.
+We reuse the dataset assembled in the EASE~2025 study on RAG for malicious
+code detection~\cite{ease2025rag}, which itself mines packages from Datadog's
+malicious-software-packages dataset~\cite{datadog-dataset}. The replication
+package ships pre-split JSON files: a training partition of 1{,}158 malicious
+and 3{,}005 benign packages, and a test partition of 276 malicious and 753
+benign packages (1{,}029 in total). Each entry contains
+the package name, file list, and the raw \texttt{setup.py} content; test
+entries additionally carry an AST-derived textual behavior description.
+Nine malicious test entries whose \texttt{setup.py} could not be extracted
+(content string \texttt{"Not Available"}) are excluded from evaluation,
+leaving 1{,}020 test samples. The training partition serves as the knowledge
+base; the test partition is never used for retrieval.
 
-\subsection{Implementation}
+The malicious class is dominated by typosquatted or squatted packages
+(e.g.,~\texttt{colorama} clones, \texttt{requests}-lookalikes) whose
+installation code frequently hides its malicious behavior in the
+\texttt{setup.py} entry point. This makes the task representative of
+real-world supply-chain attacks that LLM-based tooling is expected to catch.
+
+\subsection{Retrieval Strategies}
+\label{sec:retrieval}
+
+All methods share the same knowledge base: the raw \texttt{setup.py} sources
+of the 4{,}163 training packages, indexed in separate malicious and benign
+pools. We fix the number of retrieved documents to $k=3$, following the
+reference design. The seven methods are:
+
+\begin{itemize}
+    \item \textbf{E0 --- No RAG.} The target source is classified directly,
+    without any retrieved context. This is the controlled baseline.
+    \item \textbf{E1 --- Dense RAG.} The query is embedded with a sentence
+    embedding model and matched by cosine similarity against the embedded
+    training documents. We use the \texttt{Qwen3-Embedding-4B} model~\cite{qwen3emb}
+    and a FAISS \texttt{IndexFlatIP} store over L2-normalized vectors~\cite{vllm2023}.
+    \item \textbf{E2 --- BM25 RAG.} Sparse lexical retrieval with the
+    Okapi BM25 scoring function~\cite{bm252009}; no learned components.
+    \item \textbf{E3 --- Hybrid RAG.} Dense (E1) and sparse (E2) rankings are
+    fused with Reciprocal Rank Fusion~\cite{rrf2009},
+    $\sum_r 1/(60 + \mathrm{rank}_r(d))$; no fusion weights are trained.
+    \item \textbf{E4 --- Behavior RAG.} The target is represented by a static
+    behavior summary---imports, suspicious API calls, and behaviors such as
+    shell execution, network access, dynamic execution, or base64 decoding,
+    extracted with Python's \texttt{ast} module---and dense retrieval runs over
+    behavior summaries of the malicious pool, analogous to the
+    AST descriptions used in the original dataset.
+    \item \textbf{E5 --- Contrastive RAG.} Dense retrieval is run twice:
+    top-$k$ documents from the malicious pool \emph{and} top-$k$ from the
+    benign pool, and both groups are shown to the model with explicit
+    \texttt{MAL}/\texttt{BEN} markers.
+    \item \textbf{E6 --- Behavior + Contrastive RAG.} Behavior-summary
+    queries (as in E4) combined with dual-pool contrastive evidence (as in E5).
+\end{itemize}
+
+\subsection{LLM Configuration and Prompting}
+\label{sec:llm-config}
+
+Classification is performed by \texttt{Llama-3.1-8B-Instruct}~\cite{llama3}
+served through an OpenAI-compatible vLLM endpoint~\cite{vllm2023}. Generation
+uses temperature $0$ and a maximum of 1{,}024 output tokens. The system prompt
+instructs the model that it is performing static source-code analysis, not to
+assume behavior unsupported by the source or retrieved evidence, and that
+retrieved examples are references rather than proof; every claimed behavior
+must cite target source lines. The target source is line-numbered before it is
+embedded in the prompt. The output schema is enforced as JSON and requires
+\texttt{verdict} (malicious/benign), \texttt{confidence},
+\texttt{behaviors} (a list of \{type, evidence\} objects) and
+\texttt{rationale}. Retrieved documents are labeled with stable identifiers
+(\texttt{MAL\_*} / \texttt{BEN\_*}) and their retrieval scores.
+
+\subsection{Evaluation Metrics}
+\label{sec:metrics}
+
+\paragraph{Classification.} We report precision, recall, and F1 for the
+malicious class, benign-class F1, macro-F1, balanced accuracy, false-positive
+rate (FPR), and false-negative rate (FNR). Because JSON decoding can fail
+(e.g., output truncation by the serving backend), we additionally report
+\emph{coverage}: the fraction of samples whose response parsed successfully;
+unparsed samples are counted as failures and excluded from metric
+denominators, so that success and failure modes are reported separately.
+
+\paragraph{Explanation faithfulness.} As an approximation of whether the
+model ``hallucinates'' security-relevant behaviors, we ground each claimed
+behavior in a lightweight static checker built on Python's \texttt{ast}
+module, which flags shell execution, process creation, network access, file
+writes/deletion, dynamic execution, environment access, base64 decoding,
+remote download, and persistence. Free-form behavior names produced by the
+model are keyword-normalized to this vocabulary; a claim is
+\emph{supported} when the corresponding static flag is present on any line of
+the target. We report the unsupported-claim rate
+$= \mathrm{unsupported} / \mathrm{claimed}$, behavior precision and behavior
+recall. Because static analysis is neither sound nor complete on obfuscated
+code, we treat these figures as an \emph{automated static-grounding proxy},
+not as hallucination ground truth.
+
+\subsection{Implementation and Reproducibility}
 \label{sec:implementation}
 
-Implementation details, tools, and frameworks used.
+The pipeline is implemented in Python 3.12 as a modular package
+(retrieval, static analysis, prompting, evaluation modules) without
+framework dependencies; BM25 uses \texttt{rank-bm25}, dense indexes use
+\texttt{faiss}, and LLM/embedding calls go through a single
+OpenAI-compatible client so that any endpoint can be swapped by environment
+variables. All LLM responses, embeddings, and retrieval results are cached
+(SQLite) keyed by prompt hash, sample content, evidence IDs, and generation
+parameters; retrieval indexes are persisted on disk; and every run records
+its configuration, seed, model IDs, and git commit. Run scripts for all seven
+methods, the evaluation code, and raw per-sample outputs are included in the
+replication package.
 \endinput

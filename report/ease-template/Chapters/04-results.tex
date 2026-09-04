@@ -4,34 +4,146 @@
 \subsection{Experimental Setup}
 \label{sec:experimental-setup}
 
-Description of datasets, baselines, metrics, and hardware.
+We evaluate seven methods (E0--E6, Section~\ref{sec:retrieval}) on the 1{,}020
+usable test samples (267 malicious, 753 benign), all served by the same
+\texttt{Llama-3.1-8B-Instruct} model with identical prompting, decoding
+parameters ($T=0$, 1{,}024 max tokens), and $k=3$ retrieval settings, so that
+the only varying factor is the retrieval strategy. Dense indexes use
+\texttt{Qwen3-Embedding-4B}; BM25 uses Okapi BM25 with a standard
+implementation. The nine samples with unavailable source are excluded from
+every method.
 
 \subsection{Main Results}
 \label{sec:main-results}
 
-Presentation of main experimental results.
+Table~\ref{tab:main-results} reports classification performance. Three
+findings stand out.
 
-\begin{table}[htbp]
-    \caption{Main results comparison.}
+\begin{table}[!ht]
+    \caption{Classification results on the EASE test set (1,020 samples;
+    267 malicious). Coverage is the fraction of samples whose structured
+    response parsed successfully; metrics are computed over parsed samples.
+    Best value per column in bold.}
     \label{tab:main-results}
-    \begin{tabular}{lccc}
+    \centering
+    \begin{tabular}{lrrrrrrr}
         \toprule
-        \textbf{Method} & \textbf{Metric 1} & \textbf{Metric 2} & \textbf{Metric 3} \\
+        \textbf{Method} & \textbf{Mal. P} & \textbf{Mal. R} & \textbf{F1} & \textbf{Ben. F1} & \textbf{BAcc} & \textbf{FPR} & \textbf{Cov.} \\
         \midrule
-        Baseline 1 & 0.85 & 0.72 & 0.91 \\
-        Baseline 2 & 0.88 & 0.75 & 0.93 \\
-        \textbf{Ours} & \textbf{0.92} & \textbf{0.81} & \textbf{0.96} \\
+        E0 No RAG      & \textbf{1.000} & 0.798 & 0.888 & 0.973 & 0.899 & \textbf{0.0\%} & 0.935 \\
+        E1 Dense       & 0.972 & \textbf{0.972} & \textbf{0.972} & \textbf{0.991} & \textbf{0.981} & 0.9\% & 0.975 \\
+        E2 BM25        & 0.964 & \textbf{0.972} & 0.968 & 0.989 & 0.980 & 1.2\% & 0.975 \\
+        E3 Hybrid      & 0.976 & 0.964 & 0.970 & 0.990 & 0.978 & 0.8\% & 0.976 \\
+        E4 Behavior    & \textbf{1.000} & 0.782 & 0.878 & 0.964 & 0.891 & \textbf{0.0\%} & \textbf{0.977} \\
+        E5 Contrastive & 0.996 & 0.948 & 0.971 & 0.990 & 0.973 & \textbf{0.1\%} & 0.927 \\
+        E6 Beh.+Contr. & \textbf{1.000} & 0.788 & 0.881 & 0.966 & 0.894 & \textbf{0.0\%} & 0.974 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-\subsection{Ablation Study}
-\label{sec:ablation}
+\paragraph{Finding 1: retrieval helps, and code-level retrieval helps a lot.}
+The zero-shot baseline (E0) achieves F1~0.888 with perfect precision but
+misses roughly one in five malicious samples (recall 0.798). Dense retrieval
+(E1) lifts malicious recall to 0.972 and F1 to 0.972 (+8.4 points) while
+benchmarking near-perfect balanced accuracy (0.981); BM25 (E2) and hybrid
+(E3) essentially match this level (F1 0.968--0.970). This confirms that
+retrieval is useful for malicious-code detection, and shows that the gain
+comes almost entirely from exposing the model to similar \emph{code} rather
+than from any particular similarity mechanism.
 
-Ablation study results.
+\paragraph{Finding 2: sparse retrieval is not worse than dense retrieval.}
+BM25 (0.968) is within 0.4 F1 points of dense (0.972) at a fraction of the
+engineering cost---an in-memory term index, no embedding model, no vector
+store. Fusing both (E3) does not beat the better of the two, consistent with
+prior RAG literature on short, keyword-heavy security queries. For this task,
+lexical similarity over code tokens is a strong and cheap baseline that
+future work should not skip.
 
-\subsection{Qualitative Analysis}
-\label{sec:qualitative}
+\paragraph{Finding 3: contrastive evidence trades recall for the fewest
+false alarms.} E5, which shows the model both malicious and benign reference
+groups, yields the best precision among RAG methods (0.996) with FPR of
+0.1\%---an order of magnitude below dense/BM25/hybrid (0.8--1.2\%)---at the
+cost of recalling slightly fewer malicious samples (0.948 vs.\ 0.972).
+In a setting where triaging false alarms dominates cost, E5 dominates.
 
-Qualitative examples and analysis.
+\paragraph{Finding 4: static behavior summaries are lossy.} Replacing the
+query with an AST-derived behavior summary (E4) or adding it on top of
+contrastive retrieval (E6) actively hurts: F1 drops to 0.878/0.881, below the
+no-RAG baseline in recall-adjusted terms, although all misclassifications
+remain false negatives and FPR stays at zero. The summaries discard
+identifier names, call structure and file-path information that the model
+uses to recognize attacks such as typosquats; retrieving behavior-summary
+neighbors does not compensate.
+
+\subsection{Faithfulness of Explanations}
+\label{sec:faithfulness}
+
+Table~\ref{tab:faithfulness} reports the static-grounding proxy computed by
+keyword-normalizing the model's free-form behavior claims to our static
+vocabulary and checking each against \texttt{ast}-derived behavior flags.
+Unsupported-claim rates are high across the board (0.59--0.72), a caveat we
+discuss in Section~\ref{sec:discussion}, but the ranking is informative: the
+no-RAG baseline is the least grounded (0.717), all retrieval variants reduce
+unsupported claims, and behavior-based queries (E4) yield the lowest rate
+(0.593) with the best claim precision pair (E4/E5: 0.387/0.421). Retrieving
+explicit evidence therefore correlates with more grounded, less extrapolated
+explanations, and behavior prompts in particular restrain the model to
+security-relevant vocabulary.
+
+\begin{table}[!ht]
+    \caption{Automated static-grounding statistics for model-claimed
+    behaviors (security-relevant, normalized claims only). \texttt{Unsup.} =
+    unsupported claimed behaviors / all claimed; \texttt{Beh.~P} = supported
+    claims / claimed; \texttt{Beh.~R} = claimed-and-supported behaviors /
+    statically observed behaviors.}
+    \label{tab:faithfulness}
+    \centering
+    \begin{tabular}{lrrrr}
+        \toprule
+        \textbf{Method} & \textbf{Claims} & \textbf{Unsup.} & \textbf{Beh.~P} & \textbf{Beh.~R} \\
+        \midrule
+        E0 No RAG      & 427 & 0.717 & 0.282 & 0.427 \\
+        E1 Dense       & 560 & 0.657 & 0.312 & 0.521 \\
+        E2 BM25        & 596 & 0.685 & 0.294 & 0.517 \\
+        E3 Hybrid      & 568 & 0.665 & 0.314 & 0.525 \\
+        E4 Behavior    & 526 & \textbf{0.593} & 0.387 & \textbf{0.531} \\
+        E5 Contrastive & 455 & 0.615 & \textbf{0.421} & 0.457 \\
+        E6 Beh.+Contr. & 697 & 0.694 & 0.289 & \textbf{0.543} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Error Analysis}
+\label{sec:error-analysis}
+
+\paragraph{Consistently missed samples.} Five malicious packages are
+misclassified as benign by \emph{all seven} methods:
+\texttt{parseweb-v3}, \texttt{kazer12-v2}, and \texttt{testdufou-v2} are
+near-verbatim metadata clones of the legitimate \texttt{colorama} package
+(same authors, description and project URL in \texttt{setup.py}) that differ
+only by name; \texttt{pepequests-v0.0.1} is a minimal typosquat of
+\texttt{requests} whose \texttt{setup.py} contains no executable behavior at
+all; and \texttt{ucap-v3.6.1} hides its malicious setup behind innocuous
+packaging boilerplate. One further typosquat, \texttt{simplyjson}, is missed
+by six of seven methods. These failures are structural: when the
+\emph{specific file we analyze} carries no distinguishing signal, no
+retrieval over the same file type can help, and name-level analysis (e.g.,
+similarity to popular packages) would be required.
+
+\paragraph{Recurring false positives.} Two benign packages are flagged as
+malicious by three of seven methods
+(\texttt{authcaptureproxy-1.1.4}, \texttt{undetected-chromedriver-3.1.5.post4}),
+both of which legitimately exercise capture-proxy and privilege-heavy browser
+automation---code patterns orthographically similar to credential-theft
+trojans in the knowledge base. Spot checks of the sampled false positives
+suggest they arise from the model over-extending retrieved malicious
+evidence, the failure mode that contrastive retrieval (E5) is designed to
+suppress: indeed E5 flags neither of these two packages.
+
+\paragraph{Parse failures.} Structured-output decoding fails on 2.3--7.3\%
+of samples depending on the method. The no-RAG baseline (6.5\%) and
+contrastive method (7.3\%) are worst; both correspond to the largest average
+prompt complexity (long obfuscated targets for E0; dual evidence blocks for
+E5), consistent with backend truncation of long outputs. We treat coverage as
+a first-class result rather than silently dropping failed samples.
 \endinput

@@ -4,25 +4,94 @@
 \subsection{Interpretation of Results}
 \label{sec:interpretation}
 
-Discussion of what the results mean.
+\paragraph{Retrieval presence matters more than retrieval mechanism.}
+Across dense, sparse, and hybrid variants, malicious recall settles around
+0.96--0.97 versus 0.80 with no retrieval---the decisive factor is that the
+model sees similar code at all, not which similarity function found it. We
+attribute this to the structure of the problem: passages of malicious source
+are frequently near-duplicates (copy-pasted droppers, shared obfuscation
+snippets), which both lexical and semantic similarity recover equally well.
+
+\paragraph{Sparse retrieval is the pragmatic default.} BM25 has no
+embedding model, no GPU, and no index-approximation tuning, yet yields 0.968
+F1 vs.\ 0.972 for a 4B embedding model. For researchers and practitioners
+who want a replication-friendly pipeline, we recommend starting with BM25
+and upgrading only if a failure analysis shows semantically-paraphrased
+attacks slipping through.
+
+\paragraph{Contrastive retrieval offers a tunable precision knob.}
+Retrieving malicious examples \emph{only} biases the model toward positives;
+adding retrieved benign look-alikes lets it weigh counterevidence. The 0.1\%
+FPR of E5 is attractive when analysts must triage alarms, and the mechanism
+is orthogonal to retriever choice---a practitioner may obtain the same effect
+with BM25 over both pools.
+
+\paragraph{Behavior summaries cripple the signal.} The AST-based
+representations tested here (E4, E6) discard too much (identifiers, URL
+structure, file names, control flow). Their recall regresses to no-RAG
+levels while their recall-adjusted F1 falls below the baseline, which we
+interpret as evidence that queries should stay close to raw code whenever
+the generator can accept it.
 
 \subsection{Limitations}
 \label{sec:limitations}
 
-Limitations of your work:
+Our work has several limitations:
 \begin{itemize}
-    \item Limitation 1
-    \item Limitation 2
-    \item Limitation 3
+    \item \textbf{Single model and single dataset.} All findings are for one
+    generator (\texttt{Llama-3.1-8B-Instruct}) and one benchmark; larger or
+    stronger models may compress the gaps between retrieval strategies.
+    \item \textbf{Single file granularity.} Analysis is limited to
+    \texttt{setup.py}. Malware hidden in auxiliary files is invisible to every
+    method tested, which partly explains the samples no method detects.
+    \item \textbf{Fixed retrieval settings.} We fix $k=3$ (per the reference
+    design); a full $k\in\{1,3,5\}$ sweep and corpus-side ablations (e.g.,
+    leaving retrieved documents unlabeled) remain for future work.
+    \item \textbf{AST-based query extraction is unrefined.} Our behavior
+    summaries are simple import/call inventories; a richer, security-focused
+    static analyzer might restore some of the lost signal.
 \end{itemize}
 
 \subsection{Threats to Validity}
 \label{sec:threats}
 
-Threats to internal, external, and construct validity.
+\paragraph{Internal.} Prompt wording is confounded with method (evidence
+blocks differ). We mitigated this through one shared system prompt, common
+output schema, stable document identifiers, and identical decoding
+parameters. Faithfulness scoring is an automated proxy: keyword
+normalization and AST detection are neither sound nor complete, so grounding
+numbers should be read comparatively, not absolutely. Parse failures were
+excluded from metric denominators and reported as coverage to avoid silently
+dropping or crediting failed samples.
+
+\paragraph{Construct.} ``Ground-truth'' labels originate from the reference
+dataset; samples whose code could not be extracted (9/1029) were removed,
+which slightly privileges clean verifiable cases. Classification error is
+kept distinct from explanatory hallucination: we score the verdict against
+the label and score the explanation separately against static evidence.
+
+\paragraph{External.} The malicious population is largely typosquats from a
+specific observation period; findings may not transfer to other attack
+families, registries, or later temporal windows. We therefore treat the study
+as a controlled comparison rather than an absolute capability claim.
 
 \subsection{Future Work}
 \label{sec:future-work}
 
-Directions for future research.
+Three directions follow directly. First, replicate over a model panel
+(2--4 generators) and a second dataset (e.g., \texttt{LAMPS} D1) to test
+whether strategy rankings generalize. Second, extend detection beyond
+\texttt{setup.py}: to whole-package multi-file evidence and, for the
+typosquat class that defeats every method here, to package-name similarity
+features. Third, bring the evidence pipeline closer to production:
+cross-dataset and temporal splits of the knowledge base, higher $k$ with
+LLM-based relevance filtering cascades in the spirit of
+CRAG~\cite{crag2024}, and a deployed triage evaluation weighting FPR over
+retrieval efficiency.
+\subsection{Data and Code Availability}
+\label{sec:avail}
+
+Raw per-sample outputs for all seven methods, the evaluation scripts, and
+run scripts are provided as a replication package alongside this report; the
+underlying dataset is the EASE 2025 replication package~\cite{ease2025rag}.
 \endinput

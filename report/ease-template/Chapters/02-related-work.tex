@@ -1,18 +1,68 @@
 \section{Related Work}
 \label{sec:related-work}
 
-\subsection{Topic Area 1}
-\label{sec:topic1}
+\subsection{Supply-Chain Attacks on Package Registries}
+\label{sec:supply-chain}
 
-Related work in topic area 1~\cite{Abril07, Cohen07}.
+Malicious publications in package registries are a well-documented,
+persistent threat. Duan et al.~\cite{duan2021supply} measured hundreds of
+malicious packages across PyPI, npm, and RubyGems, showing that most are
+installed by ordinary users through ordinary \texttt{pip install}-style
+commands, and that name-based imitation (typosquatting) is a dominant attack
+style. Ohm et al.~\cite{ohm2020backstabber} cataloged attack techniques in
+open-source software supply chains, including injections that trigger at
+package-install time through \texttt{setup.py} hooks. Industry efforts such as
+Datadog's malicious-software-packages dataset~\cite{datadog-dataset} have made
+labeled collections of such packages publicly available, which we use here.
 
-\subsection{Topic Area 2}
-\label{sec:topic2}
+\subsection{LLMs for Malicious-Code Detection}
+\label{sec:llm-detection}
 
-Related work in topic area 2~\cite{Kosiur01, Harel79}.
+Recent work applies LLMs to security classification tasks. Studies on
+vulnerability reasoning caution that LLMs remain unreliable on subtle
+security judgments without auxiliary signal~\cite{ullah2024llmsec}. For
+malicious packages specifically, the EASE 2025 study---the closest prior work
+to ours---treated package classification as a zero-shot and retrieval-augmented
+task, evaluating open and proprietary models on a dataset of malicious and
+benign PyPI packages~\cite{ease2025rag}. That study augmented generation with
+knowledge bases built from YARA rules, GitHub security advisories, and
+malicious \texttt{setup.py} examples, and reported both that LLM-only
+detection leaves room for improvement and that retrieved context helps.
+A complementary line of work applies multi-agent LLM pipelines to
+package-level evidence such as metadata and behavioral descriptions,
+reporting improvements from aggregating multiple signals (\texttt{LAMPS},
+``Many Hands Make Light Work'')~\cite{lamps2025}. Our work differs in scope
+and design: instead of changing the knowledge source or inventing new
+pipelines, we fix the corpus, the model, and the prompt, and vary only the
+retrieval strategy, which lets us attribute performance differences to
+retrieval design rather than to data or agent orchestration.
+
+\subsection{Retrieval and Retrieval-Augmented Generation}
+\label{sec:rag}
+
+Retrieval-augmented generation combines a retriever with a generator so that
+the model conditions on relevant external evidence. Dense passage retrieval
+established embedding-based retrieval as a standard for open-domain
+question answering~\cite{dpr2020}; in parallel, classical sparse scoring,
+notably the Okapi BM25 function, remains a strong lexical baseline with a
+well-understood probabilistic foundation~\cite{bm252009}. Hybrid systems fuse
+the two, most simply with Reciprocal Rank Fusion~\cite{rrf2009}. In the RAG
+literature for security-adjacent code tasks, retrieving code examples has
+repeatedly been the first thing tried~\cite{ease2025rag, crag2024}, yet---to
+our knowledge---no prior study has systematically compared dense, sparse,
+hybrid, behavior-based, and contrastive retrieval configurations on the same
+malicious-package benchmark with the same generator. This is the gap we
+address.
 
 \subsection{Summary}
 \label{sec:related-summary}
 
-Summary of how your work differs from existing work.
+In summary, prior work (i)~established the supply-chain threat and the
+datasets we build on, (ii)~showed that LLMs augmented with retrieved
+knowledge are promising but not sufficient for malicious-package detection,
+and (iii)~provides the retrieval toolbox (dense, sparse, fusion). Our
+contribution is a controlled, seven-condition comparison that isolates
+retrieval strategy, together with faithfulness-oriented evaluation of the
+model's behavior claims, on the same data and model family used in the
+EASE 2025 study.
 \endinput

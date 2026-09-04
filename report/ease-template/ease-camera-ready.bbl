@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{4}
+\begin{thebibliography}{13}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -40,51 +40,147 @@
 \@ifundefined{NAT@parse@date}{}{\def\NAT@parse@date#1#2#3#4#5#6@@{\NAT@parse@date@orig#1#2#3#4#5#6@@\def\NAT@tempyear{0000}\def\NAT@tempexlab{{?}}\ifx\NAT@year\NAT@tempyear\ifx\NAT@exlab\NAT@tempexlab\def\NAT@date{[n.\,d.]}\else\edef\NAT@date{[n.\,d.]\NAT@exlab}\fi\fi}}
 \makeatother
 
-\bibitem[Abril and Plant(2007)]%
-        {Abril07}
-\bibfield{author}{\bibinfo{person}{Patricia~S. Abril} {and}
-  \bibinfo{person}{Robert Plant}.} \bibinfo{year}{2007}\natexlab{}.
-\newblock \showarticletitle{The patent holder's dilemma: Buy, sell, or troll?}
-\newblock \bibinfo{journal}{\emph{Commun. ACM}} \bibinfo{volume}{50},
-  \bibinfo{number}{1} (\bibinfo{date}{Jan.} \bibinfo{year}{2007}),
-  \bibinfo{pages}{36--44}.
+\bibitem[eas(0000)]%
+        {ease2025rag}
+ \bibinfo{year}{[n.\,d.]}\natexlab{}.
+\newblock \bibinfo{title}{Detecting Malicious Source Code in {PyPI} Packages
+  with {LLMs}: Does {RAG} Come in Handy?}
 \newblock
-\href{https://doi.org/10.1145/1188913.1188915}{doi:\nolinkurl{10.1145/1188913.1188915}}
 
 
-\bibitem[Cohen et~al\mbox{.}(2007)]%
-        {Cohen07}
-\bibfield{author}{\bibinfo{person}{Sarah Cohen}, \bibinfo{person}{Werner Nutt},
-  {and} \bibinfo{person}{Yehoshua Sagic}.} \bibinfo{year}{2007}\natexlab{}.
-\newblock \showarticletitle{Deciding equivalances among conjunctive aggregate
-  queries}.
-\newblock \bibinfo{journal}{\emph{J. ACM}} \bibinfo{volume}{54},
-  \bibinfo{number}{2}, Article \bibinfo{articleno}{5} (\bibinfo{date}{April}
-  \bibinfo{year}{2007}), \bibinfo{numpages}{50}~pages.
+\bibitem[lam(0000)]%
+        {lamps2025}
+ \bibinfo{year}{[n.\,d.]}\natexlab{}.
+\newblock \bibinfo{title}{Many Hands Make Light Work: An {LLM}-based
+  Multi-Agent System for Detecting Malicious {PyPI} Packages}.
 \newblock
-\href{https://doi.org/10.1145/1219092.1219093}{doi:\nolinkurl{10.1145/1219092.1219093}}
 
 
-\bibitem[Harel(1979)]%
-        {Harel79}
-\bibfield{author}{\bibinfo{person}{David Harel}.}
-  \bibinfo{year}{1979}\natexlab{}.
-\newblock \bibinfo{booktitle}{\emph{First-Order Dynamic Logic}}.
-  \bibinfo{series}{Lecture Notes in Computer Science},
-  Vol.~\bibinfo{volume}{68}.
-\newblock \bibinfo{publisher}{Springer-Verlag}, \bibinfo{address}{New York,
-  NY}.
+\bibitem[AI@Meta(2024)]%
+        {llama3}
+\bibfield{author}{\bibinfo{person}{AI@Meta}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{The {Llama} 3 Herd of Models}.
+\newblock \bibinfo{howpublished}{\url{https://arxiv.org/abs/2407.21783}}.
 \newblock
-\href{https://doi.org/10.1007/3-540-09237-4}{doi:\nolinkurl{10.1007/3-540-09237-4}}
 
 
-\bibitem[Kosiur(2001)]%
-        {Kosiur01}
-\bibfield{author}{\bibinfo{person}{David Kosiur}.}
-  \bibinfo{year}{2001}\natexlab{}.
-\newblock \bibinfo{booktitle}{\emph{Understanding Policy-Based Networking}
-  (\bibinfo{edition}{2nd.} ed.)}.
-\newblock \bibinfo{publisher}{Wiley}, \bibinfo{address}{New York, NY}.
+\bibitem[Cormack et~al\mbox{.}(2009)]%
+        {rrf2009}
+\bibfield{author}{\bibinfo{person}{Gordon~V. Cormack}, \bibinfo{person}{Charles
+  L~A Clarke}, {and} \bibinfo{person}{Stefan Buettcher}.}
+  \bibinfo{year}{2009}\natexlab{}.
+\newblock \showarticletitle{Reciprocal Rank Fusion Outperforms Condorcet and
+  Individual Rank Learning Methods}. In \bibinfo{booktitle}{\emph{Proceedings
+  of the 32nd International ACM SIGIR Conference}}. \bibinfo{pages}{758--759}.
+\newblock
+
+
+\bibitem[{Datadog Security Labs}(2023)]%
+        {datadog-dataset}
+\bibfield{author}{\bibinfo{person}{{Datadog Security Labs}}.}
+  \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{title}{malicious-software-packages-dataset}.
+\newblock
+  \bibinfo{howpublished}{\url{https://github.com/datadog/malicious-software-packages-dataset}}.
+\newblock
+
+
+\bibitem[Duan et~al\mbox{.}(2021)]%
+        {duan2021supply}
+\bibfield{author}{\bibinfo{person}{Ruian Duan}, \bibinfo{person}{Omar Alrawi},
+  \bibinfo{person}{Ranjita~Pai Kasturi}, \bibinfo{person}{Ryan Elder},
+  \bibinfo{person}{Brendan Saltaformaggio}, {and} \bibinfo{person}{Wenke Lee}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Towards Measuring Supply Chain Attacks on Package
+  Managers for Interpreted Languages}. In \bibinfo{booktitle}{\emph{Network and
+  Distributed Systems Security (NDSS) Symposium}}.
+\newblock
+
+
+\bibitem[Karpukhin et~al\mbox{.}(2020)]%
+        {dpr2020}
+\bibfield{author}{\bibinfo{person}{Vladimir Karpukhin}, \bibinfo{person}{Barlas
+  O{\u{g}}uz}, \bibinfo{person}{Sewon Min}, \bibinfo{person}{Patrick Lewis},
+  \bibinfo{person}{Ledell Wu}, \bibinfo{person}{Sergey Edunov},
+  \bibinfo{person}{Danqi Chen}, {and} \bibinfo{person}{Wen-tau Yih}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Dense Passage Retrieval for Open-Domain Question
+  Answering}. In \bibinfo{booktitle}{\emph{Proceedings of the Conference on
+  Empirical Methods in Natural Language Processing (EMNLP)}}.
+  \bibinfo{pages}{6769--6781}.
+\newblock
+
+
+\bibitem[Kwon et~al\mbox{.}(2023)]%
+        {vllm2023}
+\bibfield{author}{\bibinfo{person}{Woosuk Kwon}, \bibinfo{person}{Zhuohan Li},
+  \bibinfo{person}{Siyuan Zhuang}, \bibinfo{person}{Ying Sheng},
+  \bibinfo{person}{Lianmin Zheng}, \bibinfo{person}{Cody~Hao Yu},
+  \bibinfo{person}{Joseph~E. Gonzalez}, \bibinfo{person}{Hao Zhang}, {and}
+  \bibinfo{person}{Ion Stoica}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Efficient Memory Management for Large Language
+  Model Serving with {PagedAttention}}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 29th Symposium on Operating
+  Systems Principles (SOSP)}}.
+\newblock
+
+
+\bibitem[Ohm et~al\mbox{.}(2020)]%
+        {ohm2020backstabber}
+\bibfield{author}{\bibinfo{person}{Marc Ohm}, \bibinfo{person}{Henrik Plate},
+  \bibinfo{person}{Arnold Sykosch}, {and} \bibinfo{person}{Michael Meier}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Backstabber's Knife Collection: A Review of Open
+  Source Software Supply Chain Attacks}.
+\newblock In \bibinfo{booktitle}{\emph{Detection of Intrusions and Malware, and
+  Vulnerability Assessment (DIMVA)}}. \bibinfo{publisher}{Springer},
+  \bibinfo{pages}{23--43}.
+\newblock
+
+
+\bibitem[Robertson and Zaragoza(2009)]%
+        {bm252009}
+\bibfield{author}{\bibinfo{person}{Stephen Robertson} {and}
+  \bibinfo{person}{Hugo Zaragoza}.} \bibinfo{year}{2009}\natexlab{}.
+\newblock \showarticletitle{The Probabilistic Relevance Framework: {BM25} and
+  Beyond}.
+\newblock \bibinfo{journal}{\emph{Foundations and Trends in Information
+  Retrieval}} \bibinfo{volume}{3}, \bibinfo{number}{4} (\bibinfo{year}{2009}),
+  \bibinfo{pages}{333--389}.
+\newblock
+
+
+\bibitem[Team(2025)]%
+        {qwen3emb}
+\bibfield{author}{\bibinfo{person}{Qwen Team}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \bibinfo{title}{{Qwen3} Embedding Series}.
+\newblock \bibinfo{howpublished}{\url{https://arxiv.org/abs/2505.13878}}.
+\newblock
+
+
+\bibitem[Ullah et~al\mbox{.}(2024)]%
+        {ullah2024llmsec}
+\bibfield{author}{\bibinfo{person}{Saad Ullah}, \bibinfo{person}{Mingji Han},
+  \bibinfo{person}{Saurabh Pujar}, \bibinfo{person}{Hammond Pearce},
+  \bibinfo{person}{Ayse Coskun}, {and} \bibinfo{person}{Gianluca Stringhini}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{LLMs} Cannot Reliably Identify and Reason About
+  Security Vulnerabilities (Yet?): A Comprehensive Evaluation, Framework, and
+  Benchmarks}. In \bibinfo{booktitle}{\emph{IEEE Symposium on Security and
+  Privacy (S\&P)}}.
+\newblock
+
+
+\bibitem[Yan et~al\mbox{.}(2024)]%
+        {crag2024}
+\bibfield{author}{\bibinfo{person}{Shi-Qi Yan}, \bibinfo{person}{Jia-Chen Gu},
+  \bibinfo{person}{Yun Zhu}, {and} \bibinfo{person}{Zhen-Hua Ling}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Corrective Retrieval Augmented Generation}.
+  \bibinfo{howpublished}{\url{https://arxiv.org/abs/2401.15884}}. In
+  \bibinfo{booktitle}{\emph{Findings of the Association for Computational
+  Linguistics: NAACL}}.
 \newblock
 
 

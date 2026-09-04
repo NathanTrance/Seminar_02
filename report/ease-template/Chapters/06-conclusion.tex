@@ -1,7 +1,26 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-Summary of the paper and its contributions.
+This paper asked what retrieval strategy, if any, best supports LLM-based
+detection of malicious PyPI packages. Using the EASE 2025 dataset, a fixed
+\texttt{Llama-3.1-8B-Instruct} generator, and a code-only knowledge base, we
+compared a zero-shot baseline against dense, sparse, hybrid, behavior-based,
+and contrastive retrieval.
 
-We presented a novel approach for... Our method achieves... Future work includes...
+Three conclusions appear robust. Any code-level retrieval is a large win,
+lifting malicious-class F1 from 0.888 to 0.968--0.972, mostly through recall.
+The mechanism matters surprisingly little: plain BM25 matches a 4B embedding
+retriever within 0.4 F1 points, so sparse retrieval is the pragmatic default.
+And contrastive retrieval is a precision dial worth turning: retrieving
+benign counterexamples cuts the false-positive rate to 0.1\% at 0.948
+recall. Conversely, reducing queries to AST behavior summaries is
+counterproductive (F1 0.878), demonstrating that signal loss in query
+construction, not retrieval per se, is where methods fail.
+
+We also documented the residual failures that no retrieval over
+\texttt{setup.py} can fix---metadata-cloned typosquats---and the recurring
+false positives over security-adjacent legitimate packages, as guidance for
+the next generation of designs, which should extend evidence beyond a single
+file, add name-level signals, and calibrate retrieval toward triage
+workflows.
 \endinput

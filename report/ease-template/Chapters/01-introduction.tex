@@ -1,25 +1,118 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Your introduction here. This paper presents...
+Open-source package registries such as PyPI are a primary vector for software
+supply-chain attacks: adversaries publish packages that masquerade as popular
+libraries---through typosquatting, name squatting, or dependency
+confusion---and execute malicious code during installation.
+Studies of real-world registries have documented thousands of such
+incidents~\cite{duan2021supply, ohm2020backstabber}, and the attack surface
+keeps growing because anyone can publish, and installation scripts
+(\texttt{setup.py}) are arbitrary code. Manual review does not scale, which
+has motivated static-analysis heuristics and, more recently, large language
+models (LLMs) that classify source code as malicious or benign.
+
+LLMs are promising but imperfect reviewers: an 8B-scale instruct model is
+strong at recognizing overt malware, yet it misses subtle cases such as
+obfuscated droppers or typosquats whose installation script looks, on its
+face, like any other package~\cite{ease2025rag}. One prominent remedy is
+retrieval-augmented generation (RAG): before deciding, show the model
+similar examples retrieved from a corpus of previously seen
+malware~\cite{ease2025rag, crag2024}. Recent work applying RAG to malicious
+PyPI package detection, most directly the EASE 2025 study ``Detecting
+Malicious Source Code in PyPI Packages with LLMs: Does RAG Come in
+Handy?''~\cite{ease2025rag}, reports that retrieved context improves detection,
+but that study coupled retrieval to particular knowledge sources (external
+threat-intelligence collections such as YARA rules and GitHub advisories) and
+a single retrieval mechanism, leaving an important question open: \emph{how
+much of the benefit comes from retrieval itself, and how much from how
+retrieval is done?}
+
+\begin{figure}[!ht]
+    \centering
+    \fbox{%
+    \begin{minipage}[c]{0.995\linewidth}
+        \centering
+        \emph{Research question.}
+        Given a fixed code-only knowledge base and a fixed LLM,
+        which retrieval strategy---none, dense, sparse, hybrid,
+        behavior-based, or contrastive---best detects malicious PyPI packages,
+        and how do the strategies trade off recall, false alarms,
+        and explanation faithfulness?
+    \end{minipage}%
+    }
+    \caption{The research question addressed in this paper.}
+    \label{fig:rq}
+    \Description{Boxed statement of the paper's research question comparing
+    retrieval strategies for malicious package detection.}
+\end{figure}
+
+This paper reports a controlled comparison of seven pipelines that differ
+only in their retrieval strategy, evaluated on the same dataset used by the
+EASE 2025 study, with a single fixed LLM (\texttt{Llama-3.1-8B-Instruct})
+and a knowledge base built purely from the dataset's own training partition.
+Our results show that:
+
+\begin{itemize}
+    \item \textbf{Any code-level retrieval is a large win.} Dense or sparse
+    retrieval lifts malicious-class F1 from 0.888 (no RAG) to 0.968--0.972
+    (+8 points), driven almost entirely by a 17-point recall gain
+    (0.798~$\rightarrow$~0.972).
+    \item \textbf{Sparse retrieval suffices.} Plain BM25 over source tokens
+    matches a 4B embedding model within 0.4 F1 points, and hybrid fusion of
+    the two does not improve on the better single retriever.
+    \item \textbf{Contrastive retrieval minimizes false alarms.} Retrieving
+    benign counterexamples alongside malicious ones lowers the false-positive
+    rate from 0.8--1.2\% to 0.1\% while preserving 0.948 recall and
+    0.996 precision.
+    \item \textbf{AST behavior summaries are lossy.} Representing code as
+    extracted behavior summaries for retrieval \emph{hurts}
+    (F1 0.878), below even the no-RAG baseline.
+\end{itemize}
 
 \section{Motivation}
 \label{sec:motivation}
 
-Motivation for your work.
+Two practical concerns motivate the comparison. First, deployment cost:
+if a lexicon index suffices, teams can skip embedding infrastructure,
+vector stores, and the associated hosting budget. Second, triage cost:
+security-reviewing LLM-predicted alarms is expensive, so the false-positive
+rate per millisecond-of-recall may matter more than raw F1. By measuring
+recall, false alarms, coverage (parse failures), and explanation grounding
+side by side, we aim to give practitioners---and follow-up researchers---a
+basis to choose a retrieval strategy on purpose rather than by habit.
 
 \section{Contributions}
 \label{sec:contributions}
 
 The main contributions of this paper are:
 \begin{itemize}
-    \item Contribution 1
-    \item Contribution 2
-    \item Contribution 3
+    \item A controlled, reproducible comparison of six RAG variants plus a
+    zero-shot baseline (E0--E6) for LLM-based detection of malicious PyPI
+    packages on the EASE 2025 dataset, isolating retrieval strategy as the
+    only varying factor.
+    \item Evidence that sparse retrieval matches dense retrieval on this
+    task (0.968 vs.\ 0.972 F1) with no learned components.
+    \item Evidence that contrastive dual-pool retrieval reduces false alarms
+    by an order of magnitude at modest recall cost.
+    \item A negative result for behavior-summary retrieval, quantifying what
+    is lost when code is reduced to AST-derived descriptions.
+    \item An analysis of replication-grade failure modes: samples no method
+    detects (metadata-cloned typosquats), recurring false positives, and
+    structured-output parse failures, with per-sample raw outputs and a
+    reproducible evaluation pipeline released as a replication package.
 \end{itemize}
 
 \section{Paper Structure}
 \label{sec:structure}
 
-The remainder of this paper is structured as follows...
+The remainder of this paper is structured as follows.
+Section~\ref{sec:related-work} reviews related work on supply-chain attacks,
+LLMs for malicious-code detection, and retrieval-augmented methods.
+Section~\ref{sec:methodology} details the dataset, the seven retrieval
+strategies, the LLM configuration, and the evaluation metrics.
+Section~\ref{sec:results} presents the main results, fairness-oriented
+faithfulness statistics, and an error analysis. Section~\ref{sec:discussion}
+interprets the findings, discusses limitations and threats to validity, and
+outlines future work. Section~\ref{sec:conclusion} concludes.
 \endinput
