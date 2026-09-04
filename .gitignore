@@ -1,0 +1,45 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Environment / secrets ---
+.env
+.env.*
+!.env.example
+
+# --- LaTeX auxiliary files (keep .tex/.bib/.pdf only) ---
+report/ease-template/*.aux
+report/ease-template/*.bbl
+report/ease-template/*.blg
+report/ease-template/*.log
+report/ease-template/*.out
+report/ease-template/*.toc
+report/ease-template/*.lof
+report/ease-template/*.lot
+report/ease-template/*.fls
+report/ease-template/*.fdb_latexmk
+report/ease-template/*.synctex.gz
+report/ease-template/*.cut
+
+# --- Experiment logs & superseded archives ---
+code/results/raw/*.log
+code/results/*.zip
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- Git ---
+*.orig
+*.rej
