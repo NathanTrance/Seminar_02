@@ -1,51 +1,63 @@
 \section{Introduction}
 \label{sec:introduction}
 
-PyPI and similar open-source package registries are a common vector for
-software supply-chain attacks: attackers publish packages that imitate
-popular libraries---through typosquatting, name squatting, or dependency
-confusion---and execute malicious code during installation~\cite{duan2021supply,
-ohm2020backstabber}. Since anyone can publish and installation scripts are
-arbitrary code, automated detection must scale beyond manual review. Large
-language models (LLMs) have emerged as a promising tool for this task: they
-can read \texttt{setup.py} and other source files and judge whether a package
-is malicious~\cite{ease2025rag}.
+Open-source package registries have become a cornerstone of modern software
+development, giving developers access to millions of reusable
+components~\cite{duan2021supply}. The same accessibility, however, makes
+these ecosystems an attractive target for supply-chain attacks: adversaries
+inject malicious code into widely used libraries or publish deceptive
+packages that imitate legitimate ones~\cite{huang2024spiderscan,
+guo2023pypi, liang2021malicious}. Unlike traditional vulnerabilities, which
+stem from inadvertent errors, malicious packages are deliberately engineered
+to deceive users, which makes them particularly difficult to
+detect~\cite{ease2025rag}. Empirical studies show that such packages persist
+in registries despite existing safeguards~\cite{guo2023pypi,
+liang2021malicious, ohm2020backstabber}, and the continued growth of the
+Python ecosystem keeps expanding the attack surface.
 
-LLM-based detection, however, is not reliable on its own. An 8B-scale
-instruct model recognizes overt malware, but misses subtle cases such as
-obfuscated droppers and typosquats whose installation scripts look
-innocuous~\cite{ease2025rag}. Retrieval-augmented generation (RAG) is a
-natural remedy: before classifying, the model is shown similar examples
-retrieved from a corpus of known malicious packages~\cite{ease2025rag,
-crag2024}. The closest prior study, however, reports a negative result:
-augmenting LLMs with retrieved knowledge bases built from YARA rules,
-GitHub security advisories, and malicious code examples did not reliably
-improve detection, while few-shot learning was markedly more
-effective~\cite{ease2025rag}. That study coupled retrieval to specific
-knowledge sources and a single retrieval mechanism, so it remains unclear
-whether retrieval is fundamentally unhelpful or whether \emph{how} retrieval
-is performed---sparse, dense, hybrid, behavior-based, or contrastive---is
-what determines its value.
+Automated detection of malicious packages has traditionally relied on static
+and dynamic analysis and on machine-learning classifiers over hand-crafted
+features~\cite{singh2021survey}. More recently, large language models (LLMs)
+have been applied to security-oriented code analysis, including malicious
+package detection~\cite{zahan2024npm, ease2025rag}. LLMs can reason over
+source code in natural language and surface subtle indicators of malicious
+behavior, yet they are also prone to hallucination and to missing attacks
+whose code looks innocuous~\cite{ullah2024llmsec, ease2025rag}.
 
-In this paper, we compare seven pipelines that differ only in the retrieval
-strategy: no retrieval, dense, sparse (BM25), hybrid fusion, behavior-summary,
-contrastive, and behavior-summary plus contrastive. We fix the generator
-(\texttt{Llama-3.1-8B-Instruct}), the knowledge base (the training partition
-of the EASE 2025 dataset~\cite{ease2025rag}), the prompting, and the decoding
-parameters, so that observed differences are attributable to the retrieval
-strategy alone. Our main findings are:
+Retrieval-augmented generation (RAG) has been proposed as a general remedy
+for such LLM shortcomings: before answering, the model conditions on
+documents retrieved from an external corpus~\cite{lewis2020rag,
+gao2023ragsurvey}. Within security, RAG has been used to detect
+vulnerabilities in smart contracts~\cite{yu2024smartcontract}, to augment
+LLM-based vulnerability detection with knowledge derived from
+CVEs~\cite{du2024vulrag}, and to support related analyses. The most direct
+prior study of RAG for malicious PyPI package detection, however, reports a
+negative result: the EASE 2025 empirical study found that augmenting LLMs
+with knowledge bases built from YARA rules, GitHub security advisories, and
+malicious code examples did not reliably improve detection, while few-shot
+learning was markedly more effective~\cite{ease2025rag}. That study coupled
+retrieval to specific knowledge sources and a single retrieval mechanism, so
+it remains unclear whether retrieval is fundamentally unhelpful for this task
+or whether \emph{how} retrieval is performed---sparse, dense, hybrid,
+behavior-based, or contrastive---is what determines its value.
+
+In this paper, we address this question through a controlled comparison of
+seven pipelines that differ only in the retrieval strategy: no retrieval,
+dense, sparse (BM25), hybrid fusion, behavior-summary, contrastive, and
+behavior-summary plus contrastive. We use the same LLM backbone, prompting,
+and code-only knowledge base throughout, and evaluate on 1{,}020 test
+packages of a standard malicious/benign PyPI benchmark. Our main findings
+are:
 
 \begin{itemize}
-    \item Retrieval substantially improves detection. Malicious-class F1
-    increases from 0.888 without retrieval to 0.97 with dense or sparse
-    retrieval, driven by recall.
-    \item Sparse retrieval is as strong as dense retrieval: BM25 is within
-    0.4 F1 points of a 4B embedding model, with no learned components.
+    \item Code-level retrieval substantially improves detection over the
+    no-retrieval baseline, driven by a large recall gain.
+    \item Sparse retrieval performs on par with dense retrieval, at a
+    fraction of the infrastructure cost.
     \item Contrastive retrieval, which shows the model both malicious and
-    benign reference examples, reduces the false-positive rate to 0.1\% at
-    0.948 recall.
-    \item Retrieval over AST-derived behavior summaries is lossy and
-    hurts performance, with F1 falling below the no-retrieval baseline.
+    benign reference examples, sharply reduces false alarms.
+    \item Retrieval over AST-derived behavior summaries is lossy and hurts
+    performance, falling below the no-retrieval baseline.
 \end{itemize}
 
 We release the raw per-sample outputs of all seven pipelines and the

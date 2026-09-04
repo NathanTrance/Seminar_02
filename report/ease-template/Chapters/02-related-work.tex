@@ -11,9 +11,14 @@ installed by ordinary users through ordinary \texttt{pip install}-style
 commands, and that name-based imitation (typosquatting) is a dominant attack
 style. Ohm et al.~\cite{ohm2020backstabber} cataloged attack techniques in
 open-source software supply chains, including injections that trigger at
-package-install time through \texttt{setup.py} hooks. Industry efforts such as
-Datadog's malicious-software-packages dataset~\cite{datadog-dataset} have made
-labeled collections of such packages publicly available, which we use here.
+package-install time through \texttt{setup.py} hooks. Empirical studies of
+the PyPI ecosystem report that malicious packages persist despite
+registry-level safeguards~\cite{guo2023pypi, liang2021malicious}, and
+graph-based and behavior-modeling approaches have been proposed for
+detecting them in adjacent ecosystems~\cite{huang2024spiderscan}. Industry
+efforts such as Datadog's malicious-software-packages
+dataset~\cite{datadog-dataset} have made labeled collections of such
+packages publicly available, which we use here.
 
 \subsection{LLMs for Malicious-Code Detection}
 \label{sec:llm-detection}
@@ -21,16 +26,18 @@ labeled collections of such packages publicly available, which we use here.
 Recent work applies LLMs to security classification tasks. Studies on
 vulnerability reasoning caution that LLMs remain unreliable on subtle
 security judgments without auxiliary signal~\cite{ullah2024llmsec}. For
-malicious packages specifically, the EASE 2025 study---the closest prior work
-to ours---evaluated LLMs with zero-shot prompting, RAG, and few-shot learning
-on a dataset of malicious and benign PyPI packages~\cite{ease2025rag}. Its
-knowledge bases were built from YARA rules, GitHub security advisories, and
-malicious \texttt{setup.py} examples. A central finding of that study was
-counterintuitive: retrieval augmentation did not reliably help, yielding
-mediocre accuracy, whereas few-shot learning was markedly more effective.
-The study, however, coupled retrieval to its specific knowledge sources and
-a single retrieval mechanism, so it does not separate the effect of
-\emph{whether} to retrieve from \emph{how} retrieval is done.
+malicious packages specifically, LLMs have been used to detect malware in
+the npm ecosystem~\cite{zahan2024npm}, and the EASE 2025 study---the closest
+prior work to ours---evaluated LLMs with zero-shot prompting, RAG, and
+few-shot learning on a dataset of malicious and benign PyPI
+packages~\cite{ease2025rag}. Its knowledge bases were built from YARA rules,
+GitHub security advisories, and malicious \texttt{setup.py} examples. A
+central finding of that study was counterintuitive: retrieval augmentation
+did not reliably help, yielding mediocre accuracy, whereas few-shot learning
+was markedly more effective. The study, however, coupled retrieval to its
+specific knowledge sources and a single retrieval mechanism, so it does not
+separate the effect of \emph{whether} to retrieve from \emph{how} retrieval
+is done.
 A complementary line of work applies multi-agent LLM pipelines to
 package-level evidence such as metadata and behavioral descriptions,
 reporting improvements from aggregating multiple signals (\texttt{LAMPS},
@@ -44,18 +51,21 @@ retrieval design rather than to data or agent orchestration.
 \label{sec:rag}
 
 Retrieval-augmented generation combines a retriever with a generator so that
-the model conditions on relevant external evidence. Dense passage retrieval
-established embedding-based retrieval as a standard for open-domain
-question answering~\cite{dpr2020}; in parallel, classical sparse scoring,
-notably the Okapi BM25 function, remains a strong lexical baseline with a
-well-understood probabilistic foundation~\cite{bm252009}. Hybrid systems fuse
-the two, most simply with Reciprocal Rank Fusion~\cite{rrf2009}. In the RAG
-literature for security-adjacent code tasks, retrieving code examples has
-repeatedly been the first thing tried~\cite{ease2025rag, crag2024}, yet---to
-our knowledge---no prior study has systematically compared dense, sparse,
-hybrid, behavior-based, and contrastive retrieval configurations on the same
-malicious-package benchmark with the same generator. This is the gap we
-address.
+the model conditions on relevant external evidence~\cite{lewis2020rag,
+gao2023ragsurvey}. Dense passage retrieval established embedding-based
+retrieval as a standard for open-domain question answering~\cite{dpr2020};
+in parallel, classical sparse scoring, notably the Okapi BM25 function,
+remains a strong lexical baseline with a well-understood probabilistic
+foundation~\cite{bm252009}. Hybrid systems fuse the two, most simply with
+Reciprocal Rank Fusion~\cite{rrf2009}. Within security, RAG has been applied
+to vulnerability detection in smart contracts~\cite{yu2024smartcontract} and
+to knowledge-level augmentation of LLM vulnerability analysis with
+CVE-derived documents~\cite{du2024vulrag}. For malicious code specifically,
+retrieving code examples has been the first thing
+tried~\cite{ease2025rag, crag2024}, yet---to our knowledge---no prior study
+has systematically compared dense, sparse, hybrid, behavior-based, and
+contrastive retrieval configurations on the same malicious-package benchmark
+with the same generator. This is the gap we address.
 
 \subsection{Summary}
 \label{sec:related-summary}
