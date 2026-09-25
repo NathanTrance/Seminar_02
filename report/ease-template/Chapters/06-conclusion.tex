@@ -8,7 +8,7 @@ Ibiyo et al.~\cite{ease2025rag} and a fixed
 compared a zero-shot baseline against dense, sparse, hybrid, behavior-based,
 and contrastive retrieval.
 
-Three conclusions appear robust. Any code-level retrieval is a large win,
+For the controlled Llama suite, three conclusions appear robust. Any code-level retrieval is a large win,
 lifting malicious-class F1 from 0.888 to 0.97, mostly through recall. The
 mechanism matters surprisingly little: plain BM25 matches a 4B embedding
 retriever within 0.4 F1 points, so sparse retrieval is a strong, low-cost
@@ -17,6 +17,14 @@ trade-off: retrieving benign counterexamples cuts the false-positive rate to
 0.1\% at 0.948 recall. Conversely, reducing queries to AST behavior summaries
 is counterproductive (F1 0.878), demonstrating that signal loss in query
 construction, not retrieval per se, is where methods fail.
+
+We also evaluated two no-retrieval Jev comparators using the same source-only
+test inputs. Direct Jev reaches malicious F1 of 0.960, exceeding the Llama
+no-RAG baseline but remaining below the best retrieved Llama configuration.
+The tested two-stage behavior-guided Jev variant does not improve direct Jev
+(F1 0.954). These are external model-family comparisons, not evidence that a
+typed-decision interface generally replaces retrieval or a controlled
+cross-model ranking.
 
 We also documented the residual failures that no retrieval over
 \texttt{setup.py} can fix---metadata-cloned typosquats---and the recurring

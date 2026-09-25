@@ -5,9 +5,9 @@
 \label{sec:method-overview}
 
 We study whether, and how, retrieval-augmented generation (RAG) improves an
-LLM's ability to detect malicious PyPI packages, by comparing seven
-pipelines that differ only in the \emph{retrieval strategy} they apply before
-the final classification. At a high level, every pipeline
+LLM's ability to detect malicious PyPI packages, by comparing seven controlled
+Llama configurations that differ only in the \emph{retrieval strategy} they apply before
+the final classification. At a high level, each Llama configuration
 (1)~takes the target package's \texttt{setup.py} source as input,
 (2)~builds a query representation from it,
 (3)~optionally retrieves reference examples from a knowledge base of
@@ -45,11 +45,11 @@ Figure~\ref{fig:pipeline} illustrates the pipeline.
     \draw[arr] (prompt) -- (llm);
     \draw[arr] (llm) -- (out);
     \end{tikzpicture}
-    \caption{Overview of the evaluated pipelines. All stages are shared across
+    \caption{Overview of the seven controlled Llama retrieval configurations. All stages are shared across
     methods except query construction and retrieval (the behavior-based
     methods additionally build an AST behavior summary as the query).}
     \label{fig:pipeline}
-    \Description{Pipeline with target package input, line numbering,
+    \Description{Llama retrieval pipeline with target package input, line numbering,
     optional AST behavior summary, retrieval from a knowledge base, prompt
     construction, an LLM call, and a structured verdict output.}
 \end{figure*}
@@ -57,9 +57,10 @@ Figure~\ref{fig:pipeline} illustrates the pipeline.
 \subsection{Retrieval Strategies}
 \label{sec:retrieval}
 
-All methods share the same knowledge base: the raw \texttt{setup.py} sources
-of the training packages, indexed in separate malicious and benign pools. We
-fix the number of retrieved documents to $k=3$. The seven methods are:
+The seven Llama methods share the same knowledge base: the raw
+\texttt{setup.py} sources of the training packages, indexed in separate
+malicious and benign pools. We fix the number of retrieved documents to $k=3$.
+The seven Llama methods are:
 
 \begin{itemize}
     \item \textbf{No RAG.} The target source is classified directly,
@@ -88,7 +89,7 @@ fix the number of retrieved documents to $k=3$. The seven methods are:
     with dual-pool contrastive evidence.
 \end{itemize}
 
-\subsection{LLM Configuration and Prompting}
+\subsection{Llama Retrieval-Suite Configuration and Prompting}
 \label{sec:llm-config}
 
 Classification is performed by \texttt{Llama-3.1-8B-Instruct}~\cite{llama3}
@@ -104,6 +105,30 @@ embedded in the prompt. The output schema is enforced as JSON and requires
 \texttt{rationale}. Retrieved documents are labeled with stable identifiers
 (\texttt{MAL\_*} / \texttt{BEN\_*}) and their retrieval scores.
 
+\subsection{Jev No-Retrieval Comparators}
+\label{sec:jev-method}
+
+We add two external typed-decision comparators using
+\texttt{typesafe/jev-1.13} through OpenRouter~\cite{openrouterjev}. Neither comparator retrieves
+documents, uses the training corpus, or generates free-form rationale text.
+The \textbf{direct Jev} comparator receives only the target
+\texttt{setup.py} as untrusted source evidence and selects a typed
+\texttt{malicious}/\texttt{benign} decision. It returns the selected label,
+the probability distribution, and confidence.
+
+The \textbf{behavior-guided Jev} comparator uses two calls. First, it asks 12
+independent typed yes/no behavior questions aligned with the static vocabulary:
+shell execution, process creation, network access, file write/delete, dynamic
+execution, environment access, base64 decoding, remote download, persistence,
+obfuscation, and credential access. A behavior is marked present when its
+probability is at least 0.5. Second, Jev receives the target source, the full
+behavior-probability vector, and the thresholded indicators before making the
+same typed binary classification. The two calls are required because questions
+within one Jev request cannot consume one another's answers. This is a
+prompt-and-model-family comparison, not a controlled retrieval ablation: it
+changes the model, serving stack, output interface, and, for the second
+variant, the input representation.
+
 \subsection{Implementation and Reproducibility}
 \label{sec:implementation}
 
@@ -115,7 +140,10 @@ OpenAI-compatible client so that any endpoint can be swapped by environment
 variables. All LLM responses, embeddings, and retrieval results are cached
 (SQLite) keyed by prompt hash, sample content, evidence IDs, and generation
 parameters; retrieval indexes are persisted on disk; and every run records
-its configuration, seed, model IDs, and git commit. Run scripts for all seven
-methods, the evaluation code, and raw per-sample outputs are included in the
-replication package.
+its configuration, seed, model IDs, and git commit. Run scripts for the seven
+Llama methods and both Jev comparators, the evaluation code, and raw per-sample
+outputs are included in the replication package. Jev runs are persisted as resumable JSONL files with the
+typed responses, resolved model identifier, token usage, latency, cost, and
+explicit failures; the behavior-guided run also stores every behavior
+probability and its fixed 0.5 threshold.
 \endinput

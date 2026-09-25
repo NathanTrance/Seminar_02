@@ -63,6 +63,40 @@ python scripts/run_experiment.py \
   --limit 5
 ```
 
+## Direct JEV decision demo
+
+The JEV demo sends source text directly to Jev through OpenRouter without
+retrieval or another language model. Validate the two synthetic fixtures without
+network access:
+
+```bash
+python scripts/run_jev_demo.py --dry-run
+```
+
+For a bounded two-request live demo:
+
+```bash
+export OPENROUTER_API_KEY='sk-or-<personal-key>'
+python scripts/run_jev_demo.py --live
+```
+
+Or use the bash launcher. With no arguments it securely prompts for a key when
+needed and runs one live synthetic sample:
+
+```bash
+./run_scripts/run_jev_demo.sh
+```
+
+It can also load `OPENROUTER_API_KEY` from the ignored `code/.env` file.
+Arguments are forwarded to the Python CLI, for example:
+
+```bash
+./run_scripts/run_jev_demo.sh --dry-run --limit 1
+```
+
+See `docs/jev_demo.md` for the request contract, replay command, and safety
+limitations.
+
 ## Experiments
 
 ### Full run (all 1029 test samples)

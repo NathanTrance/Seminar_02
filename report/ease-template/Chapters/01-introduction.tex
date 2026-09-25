@@ -47,7 +47,7 @@ dense, sparse (BM25), hybrid fusion, behavior-summary, contrastive, and
 behavior-summary plus contrastive. We use the same LLM backbone, prompting,
 and code-only knowledge base throughout, and evaluate on 1{,}020 test
 packages of a standard malicious/benign PyPI benchmark. Our main findings
-are:
+for this controlled Llama retrieval suite are:
 
 \begin{itemize}
     \item Code-level retrieval substantially improves detection over the
@@ -60,6 +60,13 @@ are:
     performance, falling below the no-retrieval baseline.
 \end{itemize}
 
+We additionally report two no-retrieval Jev comparators: a direct typed
+source decision and a two-stage behavior-guided typed decision. They use a
+different model family and output interface, so they are not part of the
+controlled retrieval ablation. Direct Jev exceeds the Llama no-RAG baseline,
+but remains below the strongest retrieved Llama configuration; the tested
+behavior-guided variant does not improve its direct counterpart.
+
 % We release the raw per-sample outputs of all seven pipelines and the
 % evaluation scripts as a replication package.
 
@@ -68,7 +75,7 @@ Section~\ref{sec:related-work} reviews related work.
 Section~\ref{sec:methodology} describes the dataset, the retrieval
 strategies, the model configuration, and the evaluation metrics.
 Section~\ref{sec:results} reports classification results, explanation
-faithfulness, and an error analysis. Section~\ref{sec:discussion}
+faithfulness, typed behavior alignment, and an error analysis. Section~\ref{sec:discussion}
 interprets the findings and discusses limitations and threats to validity.
 Section~\ref{sec:conclusion} concludes.
 \endinput

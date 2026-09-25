@@ -1,60 +1,17 @@
 \section{Results}
 \label{sec:results}
 
-\subsection{Experimental Setup}
-\label{sec:experimental-setup}
-
-\paragraph{Dataset.} We evaluate on the dataset assembled by
-Ibiyo et al.~\cite{ease2025rag}, which mines packages from Datadog's
-malicious-software-packages dataset~\cite{datadog-dataset}. The replication
-package ships pre-split JSON files: a training partition of 1{,}158 malicious
-and 3{,}005 benign packages, and a test partition of 276 malicious and 753
-benign packages (1{,}029 in total). Each entry contains the package name,
-file list, and the raw \texttt{setup.py} content; test entries additionally
-carry an AST-derived textual behavior description. Nine malicious test
-entries whose \texttt{setup.py} could not be extracted are excluded from evaluation, leaving 1{,}020 test
-samples (267 malicious, 753 benign). The training partition serves as the
-knowledge base; the test partition is never used for retrieval. The malicious
-class is dominated by typosquatted or squatted packages (e.g.,
-\texttt{colorama} clones, \texttt{requests}-lookalikes) whose installation
-code frequently hides its malicious behavior in the \texttt{setup.py} entry
-point, making the task representative of real-world supply-chain attacks.
-
-\paragraph{Setup.} All seven methods (Section~\ref{sec:retrieval}) are served
-by the same \texttt{Llama-3.1-8B-Instruct} model with identical prompting
-and decoding settings, and retrieve the top three documents per query, so
-that the only varying factor is the retrieval strategy. Dense indexes use
-\texttt{Qwen3-Embedding-4B}; BM25 uses a standard Okapi implementation.
-
-\paragraph{Metrics.} We report precision, recall, and F1 for the malicious
-class, benign-class F1, macro-F1, balanced accuracy, false-positive rate
-(FPR), and false-negative rate (FNR). Because JSON decoding can fail (e.g.,
-output truncation by the serving backend), we additionally report
-\emph{coverage}: the fraction of samples whose response parsed successfully;
-unparsed samples are counted as failures and excluded from metric
-denominators, so that success and failure modes are reported separately.
-As an approximation of whether the model ``hallucinates'' security-relevant
-behaviors, we also ground each claimed behavior in a lightweight static
-checker built on Python's \texttt{ast} module, which flags shell execution,
-process creation, network access, file writes/deletion, dynamic execution,
-environment access, base64 decoding, remote download, and persistence.
-Free-form behavior names produced by the model are keyword-normalized to this
-vocabulary; a claim is \emph{supported} when the corresponding static flag is
-present on any line of the target. We report the unsupported-claim rate
-$= \mathrm{unsupported} / \mathrm{claimed}$, behavior precision, and behavior
-recall. Because static analysis is neither sound nor complete on obfuscated
-code, we treat these figures as an \emph{automated static-grounding proxy},
-not as hallucination ground truth.
-
 \subsection{Main Results}
 \label{sec:main-results}
 
-Table~\ref{tab:main-results} reports classification performance. Three
+Table~\ref{tab:main-results} reports classification performance. Several
 findings stand out.
 
 \begin{table*}[!ht]
-    \caption{Classification metrics for the seven compared methods. FPR is the
-    false-positive rate. Best value per column in bold.}
+    \caption{Classification metrics for seven controlled Llama retrieval
+    configurations and two no-retrieval Jev comparators (direct and two-stage
+    behavior-guided). FPR is the false-positive rate. Bold values are the best
+    observed values, not a controlled cross-model comparison.}
     \label{tab:main-results}
     \centering
     \begin{tabular}{lccc|ccc|cc}
@@ -70,11 +27,13 @@ findings stand out.
         Behavior         & \textbf{1.000} & 0.782 & 0.878 & 0.931 & \textbf{1.000} & 0.964 & 0.891 & \textbf{0.0\%} \\
         Contrastive      & 0.996 & 0.948 & 0.971 & 0.982 & 0.999 & 0.990 & 0.973 & \textbf{0.1\%} \\
         Beh.\ + Contr.   & \textbf{1.000} & 0.788 & 0.881 & 0.933 & \textbf{1.000} & 0.966 & 0.894 & \textbf{0.0\%} \\
+        Jev (direct)     & \textbf{1.000} & 0.922 & 0.960 & 0.974 & \textbf{1.000} & 0.987 & 0.961 & \textbf{0.0\%} \\
+        Jev (beh.-guided)& 0.996 & 0.915 & 0.954 & 0.972 & 0.999 & 0.985 & 0.957 & 0.1\% \\
         \bottomrule
     \end{tabular}
 \end{table*}
 
-\paragraph{Finding 1: retrieval improves detection.}
+\paragraph{Finding 1: retrieval improves detection within the Llama suite.}
 The zero-shot baseline achieves F1~0.888 with perfect precision but misses
 roughly one in five malicious samples (recall 0.798). Dense retrieval lifts
 malicious recall to 0.972 and F1 to 0.972 (+8.4 points) with a balanced
@@ -82,6 +41,27 @@ accuracy of 0.981; BM25 and hybrid essentially match this level (F1
 0.968--0.970). Retrieval is thus useful for malicious-code detection, and the
 gain comes almost entirely from exposing the model to similar \emph{code},
 regardless of the similarity mechanism.
+
+\paragraph{Direct Jev comparator.} Without retrieval, Jev obtains malicious F1
+of 0.960 and balanced accuracy of 0.961, with no false positives. Its lower
+malicious recall than the strongest retrieval configuration (0.922 versus
+0.972) shows that source-only typed decisions remain sensitive to sparse or
+ambiguous \texttt{setup.py} evidence. This comparison is indicative rather
+than a controlled ablation because Jev is a different model family. Of the
+1{,}020 evaluable records, nine unusually large malicious sources returned API
+validation errors, yielding 0.991 coverage; failed calls are excluded from the
+classification denominators and reported through coverage. The complete run
+used 0.049 USD of OpenRouter Jev inference under the recorded provider/model
+configuration.
+
+\paragraph{Behavior guidance does not improve classification.} The two-stage
+Jev variant reaches malicious F1 of 0.954 and balanced accuracy of 0.957,
+slightly below direct Jev (0.960 and 0.961). It also introduces one false
+positive while reducing malicious recall from 0.922 to 0.915. Thus, feeding
+thresholded behavior indicators back into Jev does not improve this task under
+the tested prompt and 0.5 threshold. The two-stage run costs 0.136 USD under
+the recorded provider/model configuration and has the same 0.991 coverage as
+direct Jev.
 
 \paragraph{Finding 2: sparse retrieval is not worse than dense retrieval.}
 BM25 (0.968) is within 0.4 F1 points of dense (0.972) at a fraction of the
@@ -114,6 +94,11 @@ neighbors does not compensate.
 Table~\ref{tab:faithfulness} reports the static-grounding proxy computed by
 keyword-normalizing the model's free-form behavior claims to our static
 vocabulary and checking each against \texttt{ast}-derived behavior flags.
+Direct Jev returns a typed classification without behavior claims or source
+citations, so its faithfulness statistics are not applicable. Behavior-guided
+Jev does return typed behavior probabilities; its row is typed behavior
+alignment rather than free-form explanation faithfulness and is therefore not
+directly comparable with the Llama rows.
 Unsupported-claim rates are high across the board (0.59--0.72), a caveat we
 discuss in Section~\ref{sec:discussion}, but the ranking is informative: the
 no-RAG baseline is the least grounded (0.717), all retrieval variants reduce
@@ -124,8 +109,8 @@ extrapolated explanations, and behavior prompts in particular restrain the
 model to security-relevant vocabulary.
 
 \begin{table}[!ht]
-    \caption{Automated static-grounding statistics for model-claimed
-    behaviors (security-relevant, normalized claims only). \texttt{Unsup.} =
+    \caption{Automated static-grounding statistics for Llama model-claimed
+    behaviors and typed behavior alignment for behavior-guided Jev. \texttt{Unsup.} =
     unsupported claimed behaviors / all claimed; \texttt{Beh.~P} = supported
     claims / claimed; \texttt{Beh.~R} = claimed-and-supported behaviors /
     statically observed behaviors.}
@@ -141,16 +126,20 @@ model to security-relevant vocabulary.
         Hybrid         & 568 & 0.665 & 0.314 & 0.525 \\
         Behavior       & 526 & \textbf{0.593} & 0.387 & \textbf{0.531} \\
         Contrastive    & 455 & 0.615 & \textbf{0.421} & 0.457 \\
-        Beh.\ + Contr. & 697 & 0.694 & 0.289 & \textbf{0.543} \\
+        Beh.\ + Contr. & 697 & 0.694 & 0.289 & 0.543 \\
+        Jev (direct)   & N/A & N/A & N/A & N/A \\
+        Jev (beh.-guided)$^{\dagger}$ & 1{,}613 & 0.747 & 0.202 & 0.927 \\
         \bottomrule
     \end{tabular}
+    \par\smallskip\footnotesize{$^{\dagger}$Typed behavior alignment at a 0.5
+    probability threshold; Jev does not generate source-grounded explanations.}
 \end{table}
 
 \subsection{Error Analysis}
 \label{sec:error-analysis}
 
 \paragraph{Consistently missed samples.} Five malicious packages are
-misclassified as benign by \emph{all seven} methods:
+misclassified as benign by \emph{all seven Llama configurations}:
 \texttt{parseweb-v3}, \texttt{kazer12-v2}, and \texttt{testdufou-v2} are
 near-verbatim metadata clones of the legitimate \texttt{colorama} package
 (same authors, description and project URL in \texttt{setup.py}) that differ
@@ -158,13 +147,13 @@ only by name; \texttt{pepequests-v0.0.1} is a minimal typosquat of
 \texttt{requests} whose \texttt{setup.py} contains no executable behavior at
 all; and \texttt{ucap-v3.6.1} hides its malicious setup behind innocuous
 packaging boilerplate. One further typosquat, \texttt{simplyjson}, is missed
-by six of seven methods. These failures are structural: when the
+by six of the seven Llama configurations. These failures are structural: when the
 \emph{specific file we analyze} carries no distinguishing signal, no
 retrieval over the same file type can help, and name-level analysis (e.g.,
 similarity to popular packages) would be required.
 
 \paragraph{Recurring false positives.} Two benign packages are flagged as
-malicious by three of seven methods
+malicious by three of the seven Llama configurations
 (\texttt{authcaptureproxy-1.1.4},
 \texttt{undetected-chromedriver-3.1.5.post4}),
 both of which legitimately exercise capture-proxy and privilege-heavy browser
@@ -174,11 +163,157 @@ suggest they arise from the model over-extending retrieved malicious
 evidence, the failure mode that contrastive retrieval is designed to
 suppress: indeed it flags neither of these two packages.
 
-\paragraph{Parse failures.} Structured-output decoding fails on 2.3--7.3\%
+\paragraph{What the model sees.} Figure~\ref{fig:error-examples} contrasts
+three real \texttt{setup.py} excerpts. The two false negatives contain
+opposite forms of missing evidence: one impersonates a known benign package
+through its metadata, while the other contains no executable installation
+behavior. The false positive instead contains security-sensitive language in
+a benign package declaration. Together, these examples show why source-only
+signals can be insufficient even when retrieval improves aggregate recall.
+
+\begin{figure*}[!ht]
+    \centering
+    \fcolorbox{black}{black!4}{%
+    \begin{minipage}[t]{0.30\textwidth}
+        \vspace{0.5ex}
+        \textbf{A. Metadata clone}\\[-0.25ex]
+        \scriptsize\textbf{Package:} \texttt{parseweb-v3}\\
+        \scriptsize\textbf{Gold:} malicious \quad \textbf{Outcome:} FN (7/7)\\[0.75ex]
+        \rule{\linewidth}{0.3pt}\\[-0.5ex]
+        \footnotesize\ttfamily
+        name='parseweb'\\
+        author='Jonathan Hartley'\\
+        description='Pure-python Colors'\\
+        url='.../tartley/colorama'\\
+        install\_requires=['requests', 'colorama']\\[0.75ex]
+        \normalfont\scriptsize
+        The analyzed file mirrors \texttt{colorama}; only the package name
+        conflicts with the benign identity.
+        \vspace{0.5ex}
+    \end{minipage}}
+    \hfill
+    \fcolorbox{black}{black!4}{%
+    \begin{minipage}[t]{0.30\textwidth}
+        \vspace{0.5ex}
+        \textbf{B. Behavior-empty typosquat}\\[-0.25ex]
+        \scriptsize\textbf{Package:} \texttt{pepequests-v0.0.1}\\
+        \scriptsize\textbf{Gold:} malicious \quad \textbf{Outcome:} FN (7/7)\\[0.75ex]
+        \rule{\linewidth}{0.3pt}\\[-0.5ex]
+        \footnotesize\ttfamily
+        name = 'pepequests'\\
+        version = '0.0.1'\\
+        description = ''\\
+        install\_requires=[]\\[0.75ex]
+        \normalfont\scriptsize
+        The file is only a package declaration: it exposes no installation-time
+        action for code or behavior retrieval to match.
+        \vspace{0.5ex}
+    \end{minipage}}
+    \hfill
+    \fcolorbox{black}{black!4}{%
+    \begin{minipage}[t]{0.30\textwidth}
+        \vspace{0.5ex}
+        \textbf{C. Security-sensitive benign tool}\\[-0.25ex]
+        \scriptsize\textbf{Package:} \texttt{authcaptureproxy-1.1.4}\\
+        \scriptsize\textbf{Gold:} benign \quad \textbf{Outcome:} FP (3/7)\\[0.75ex]
+        \rule{\linewidth}{0.3pt}\\[-0.5ex]
+        \footnotesize\ttfamily
+        name = 'authcaptureproxy'\\
+        description = '... capture auth\\
+        information from a webpage'\\
+        entry\_points = \{'console\_scripts': [\\
+        \quad 'auth\_capture\_proxy = ...']\}\\[0.75ex]
+        \normalfont\scriptsize
+        Benign metadata contains terms that resemble credential-theft signals,
+        but the excerpt shows no malicious installation behavior.
+        \vspace{0.5ex}
+    \end{minipage}}
+    \caption{Concrete error examples from the held-out \texttt{setup.py}
+    files. FN and FP denote false negative and false positive, respectively;
+    the parenthesized count is the number of Llama configurations making that
+    error. Excerpts are shortened only for presentation.}
+    \label{fig:error-examples}
+\end{figure*}
+
+\paragraph{Jev error analysis.} Direct Jev makes 20 false negatives and no
+false positives. Behavior guidance corrects six of those direct false
+negatives, but it flips eight direct true positives to benign and introduces
+one false positive, producing 22 false negatives and one false positive
+overall. Figure~\ref{fig:jev-error-examples} shows the three corresponding
+failure modes from the saved typed outputs. These probabilities are the model's
+decision signals, not calibrated probabilities or evidence of causal model
+reasoning.
+
+\begin{figure*}[!ht]
+    \centering
+    \fcolorbox{black}{black!4}{%
+    \begin{minipage}[t]{0.30\textwidth}
+        \vspace{0.5ex}
+        \textbf{A. Guidance corrects a borderline miss}\\[-0.25ex]
+        \scriptsize\textbf{Package:} \texttt{testingijijwdaijdwa}\\
+        \scriptsize\textbf{Gold:} malicious \quad \textbf{Direct:} benign (0.52)\\
+        \scriptsize\textbf{Guided:} malicious (0.87)\\[0.75ex]
+        \rule{\linewidth}{0.3pt}\\[-0.5ex]
+        \footnotesize\ttfamily
+        install\_requires=[\\
+        \quad 'browser\_cookie3', 'discordwebhook',\\
+        \quad 'robloxpy', 'requests']\\[0.75ex]
+        \normalfont\scriptsize
+        Stage one marks \texttt{network\_access} (0.50) and
+        \texttt{credential\_access} (0.60) present, reversing a near-tied
+        direct decision.
+        \vspace{0.5ex}
+    \end{minipage}}
+    \hfill
+    \fcolorbox{black}{black!4}{%
+    \begin{minipage}[t]{0.30\textwidth}
+        \vspace{0.5ex}
+        \textbf{B. Guidance removes a direct detection}\\[-0.25ex]
+        \scriptsize\textbf{Package:} \texttt{pyevasive}\\
+        \scriptsize\textbf{Gold:} malicious \quad \textbf{Direct:} malicious (0.73)\\
+        \scriptsize\textbf{Guided:} benign (0.78)\\[0.75ex]
+        \rule{\linewidth}{0.3pt}\\[-0.5ex]
+        \footnotesize\ttfamily
+        description = 'Python Crypter For Red Teaming'\\
+        keywords = ['python', 'crypter',\\
+        \quad 'avbypass', 'crypt']\\[0.75ex]
+        \normalfont\scriptsize
+        No Stage-one behavior exceeds 0.5. The fixed behavior vocabulary thus
+        supplies no positive typed indicator despite the direct detection.
+        \vspace{0.5ex}
+    \end{minipage}}
+    \hfill
+    \fcolorbox{black}{black!4}{%
+    \begin{minipage}[t]{0.30\textwidth}
+        \vspace{0.5ex}
+        \textbf{C. Guidance creates a false alarm}\\[-0.25ex]
+        \scriptsize\textbf{Package:} \texttt{authcaptureproxy-1.1.4}\\
+        \scriptsize\textbf{Gold:} benign \quad \textbf{Direct:} benign (0.81)\\
+        \scriptsize\textbf{Guided:} malicious (0.51)\\[0.75ex]
+        \rule{\linewidth}{0.3pt}\\[-0.5ex]
+        \footnotesize\ttfamily
+        description = '... capture authentication\\
+        information from a webpage'\\
+        entry\_points = \{'console\_scripts': [...]\}\\[0.75ex]
+        \normalfont\scriptsize
+        Stage one marks \texttt{credential\_access} present (0.63), moving a
+        direct benign decision just across the malicious threshold.
+        \vspace{0.5ex}
+    \end{minipage}}
+    \caption{Jev decision reversals on held-out \texttt{setup.py} files.
+    Parenthesized values are the saved probability of the displayed decision.
+    The behavior-guided variant receives the full stage-one vector, not only
+    the indicators shown here. Excerpts are shortened for presentation.}
+    \label{fig:jev-error-examples}
+\end{figure*}
+
+\paragraph{Llama parse failures.} Structured-output decoding fails on 2.3--7.3\%
 of samples depending on the method. The no-RAG baseline (6.5\%) and
 contrastive method (7.3\%) are worst; both correspond to the largest average
 prompt complexity (long obfuscated targets for no-RAG; dual evidence blocks
 for contrastive), consistent with backend truncation of long outputs. We
 treat coverage as a first-class result rather than silently dropping failed
-samples.
+samples. The Jev comparators use typed outputs instead of JSON generation;
+their separate 0.991 coverage is caused by nine unusually large sources that
+returned API validation errors, not by output decoding.
 \endinput

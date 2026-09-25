@@ -62,6 +62,12 @@ pipelines, we fix the corpus, the model, and the prompt, and vary only the
 retrieval strategy, which lets us attribute performance differences to
 retrieval design rather than to data or agent orchestration.
 
+Our Jev experiments complement this generative-LLM literature with a
+typed-decision comparator. Rather than generating a rationale, the comparator
+returns typed binary and behavior probabilities from the supplied source. We
+use it as an implementation-level external baseline, not as evidence that
+typed decisions or a particular provider generally dominate generative models.
+
 \subsection{Retrieval and Retrieval-Augmented Generation}
 \label{sec:rag}
 

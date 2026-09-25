@@ -18,7 +18,7 @@ practice is that ``RAG'' is not a single intervention: both the corpus and
 the retrieval strategy need to be chosen deliberately, and our comparison
 provides a first controlled map of that design space.
 
-\paragraph{Retrieval presence matters more than retrieval mechanism.}
+\paragraph{Retrieval presence matters more than retrieval mechanism in the Llama suite.}
 Across dense, sparse, and hybrid variants, malicious recall settles around
 0.96--0.97 versus 0.80 with no retrieval---the decisive factor is that the
 model sees similar code at all, not which similarity function found it. We
@@ -46,14 +46,23 @@ regresses to no-RAG levels while their recall-adjusted F1 falls below the
 baseline, which we interpret as evidence that queries should stay close to
 raw code whenever the generator can accept it.
 
+\paragraph{Jev is a bounded external comparator.} Direct Jev, with no
+retrieval, exceeds the Llama no-RAG baseline but does not reach the strongest
+retrieved Llama result. This does not show that retrieval is unnecessary or
+that either model family dominates: the comparison changes the model, serving
+provider, output interface, and prompt. The two-stage behavior-guided Jev
+variant performs slightly worse than direct Jev, so the tested fixed behavior
+vocabulary and 0.5 threshold do not add useful classification signal here.
+
 \subsection{Limitations}
 \label{sec:limitations}
 
 Our work has several limitations:
 \begin{itemize}
-    \item \textbf{Single model and single dataset.} All findings are for one
-    generator (\texttt{Llama-3.1-8B-Instruct}) and one benchmark; larger or
-    stronger models may compress the gaps between retrieval strategies.
+    \item \textbf{Controlled single-model retrieval ablation.} The controlled
+    retrieval findings are for one generator (\texttt{Llama-3.1-8B-Instruct})
+    and one benchmark. Jev adds an externally served model-family comparator,
+    but we did not repeat the retrieval ablation across multiple generators.
     \item \textbf{Single file granularity.} Analysis is limited to
     \texttt{setup.py}. Malware hidden in auxiliary files is invisible to every
     method tested, which partly explains the samples no method detects.
@@ -63,6 +72,10 @@ Our work has several limitations:
     \item \textbf{AST-based query extraction is unrefined.} Our behavior
     summaries are simple import/call inventories; a richer, security-focused
     static analyzer might restore some of the lost signal.
+    \item \textbf{Jev prompt and threshold dependence.} The behavior-guided
+    result depends on one typed behavior vocabulary, one 0.5 threshold, and
+    two-stage prompting. Its typed behavior alignment is not equivalent to
+    source-grounded explanation faithfulness.
 \end{itemize}
 
 \subsection{Threats to Validity}
@@ -71,7 +84,9 @@ Our work has several limitations:
 \paragraph{Internal.} Prompt wording is confounded with method (evidence
 blocks differ). We mitigated this through one shared system prompt, common
 output schema, stable document identifiers, and identical decoding
-parameters. Faithfulness scoring is an automated proxy: keyword
+parameters within the Llama suite. The Jev comparison has a distinct typed
+output interface and provider, so it is not controlled for these factors.
+Faithfulness scoring is an automated proxy: keyword
 normalization and AST detection are neither sound nor complete, so grounding
 numbers should be read comparatively, not absolutely. Parse failures were
 excluded from metric denominators and reported as coverage to avoid silently
@@ -81,31 +96,37 @@ dropping or crediting failed samples.
 dataset; samples whose code could not be extracted (9/1029) were removed,
 which slightly privileges clean verifiable cases. Classification error is
 kept distinct from explanatory hallucination: we score the verdict against
-the label and score the explanation separately against static evidence.
+the label and score the explanation separately against static evidence. Direct
+Jev has no explanation to score; behavior-guided Jev is evaluated as typed
+behavior alignment rather than explanation faithfulness.
 
 \paragraph{External.} The malicious population is largely typosquats from a
 specific observation period; findings may not transfer to other attack
 families, registries, or later temporal windows. We therefore treat the study
-as a controlled comparison rather than an absolute capability claim.
+as a controlled Llama retrieval comparison rather than an absolute capability
+claim. The Jev outcomes also depend on the recorded provider/model version and
+should not be generalized across Jev releases or providers.
 
 \subsection{Future Work}
 \label{sec:future-work}
 
 Three directions follow directly. First, replicate over a model panel
 (2--4 generators) and a second dataset (e.g., \texttt{LAMPS} D1) to test
-whether strategy rankings generalize. Second, extend detection beyond
+whether strategy rankings generalize, including the same retrieval conditions
+across model families. Second, extend detection beyond
 \texttt{setup.py}: to whole-package multi-file evidence and, for the
 typosquat class that defeats every method here, to package-name similarity
 features. Third, bring the evidence pipeline closer to production:
 cross-dataset and temporal splits of the knowledge base, higher $k$ with
 LLM-based relevance filtering cascades in the spirit of
 CRAG~\cite{crag2024}, and a deployed triage evaluation weighting FPR over
-retrieval efficiency.
+retrieval efficiency. Finally, test direct and behavior-guided Jev across
+behavior vocabularies and calibrated thresholds.
 \subsection{Data and Code Availability}
 \label{sec:avail}
 
-Raw per-sample outputs for all seven methods, the evaluation scripts, and
-run scripts are provided as a replication package alongside this report; the
-underlying dataset is the replication package of
+Raw per-sample outputs for the seven Llama configurations and both Jev
+comparators, the evaluation scripts, request templates, and run scripts are
+provided as a replication package alongside this report; the underlying dataset is the replication package of
 Ibiyo et al.~\cite{ease2025rag}.
 \endinput

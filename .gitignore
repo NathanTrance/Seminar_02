@@ -32,6 +32,7 @@ report/ease-template/*.cut
 # --- Experiment logs & superseded archives ---
 code/results/raw/*.log
 code/results/*.zip
+code/results/jev_demo/
 
 # --- IDE / OS ---
 .vscode/
