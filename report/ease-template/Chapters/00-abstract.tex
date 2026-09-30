@@ -16,10 +16,7 @@ retriever; contrastive retrieval reduces false alarms; and behavior-summary
 queries underperform the no-retrieval baseline. We also analyze the samples
 that no method detects (metadata-cloned typosquats) and use a static-grounding
 proxy to measure explanation faithfulness, suggesting that retrieval is
-associated with fewer unsupported behavior claims. As an external no-retrieval comparison, we additionally run
-two typed-decision Jev variants: direct source classification and a two-stage
-behavior-guided decision. Direct Jev exceeds the controlled Llama no-RAG
-baseline but does not match the strongest retrieved Llama configuration; the
-tested behavior guidance does not improve direct Jev.
+associated with fewer unsupported behavior claims. As a side exploration, we also try Jev, a typed-decision
+model, as an external no-retrieval comparator.
 \end{abstract}
 \endinput
