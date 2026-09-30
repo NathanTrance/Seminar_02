@@ -2,22 +2,17 @@
 \label{sec:conclusion}
 
 This paper asked what retrieval strategy, if any, best supports LLM-based
-detection of malicious PyPI packages. Using the dataset of
-Ibiyo et al.~\cite{ease2025rag}, a fixed \texttt{Llama-3.1-8B-Instruct}
-generator, and a code-only knowledge base, we compared a zero-shot baseline
-against dense, sparse, hybrid, behavior-based, and contrastive retrieval.
-
-For the controlled Llama suite, three conclusions emerge: code-level
-retrieval is a large win (malicious-class F1 from 0.888 to 0.97, mostly
-through recall); plain BM25 matches a 4B embedding retriever within 0.4 F1
-points; and contrastive retrieval cuts the false-positive rate to 0.1\% at
-0.948 recall. Reducing queries to AST behavior summaries is counterproductive
-(F1 0.878), suggesting that query construction, not retrieval itself, was the
-limiting factor in our setting.
-
-As a side exploration, the typed-decision model Jev performs competitively
-without retrieval (F1 0.960) but does not reach the strongest retrieved
-configuration. The residual failures we documented---metadata-cloned
+detection of malicious PyPI packages. On the dataset of
+Ibiyo et al.~\cite{ease2025rag}, we compared seven \texttt{Llama-3.1-8B-Instruct}
+pipelines that differ only in retrieval strategy: code-level retrieval
+improved detection over the no-retrieval baseline (malicious-class F1 from
+0.888 to 0.97), sparse BM25 performed comparably to dense retrieval at a
+fraction of the infrastructure cost, and contrastive retrieval reduced false
+alarms. In contrast, behavior-summary queries underperformed the baseline,
+suggesting that query construction, not retrieval itself, was the limiting
+factor. As a side exploration, the typed-decision model Jev performed
+competitively without retrieval but did not reach the strongest retrieved
+configuration, and the residual failures we documented---metadata-cloned
 typosquats and false positives on security-adjacent benign
 packages---indicate that pipelines restricted to \texttt{setup.py} may
 benefit from name-level signals and additional evidence.
