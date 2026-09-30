@@ -8,15 +8,15 @@ Ibiyo et al.~\cite{ease2025rag} and a fixed
 compared a zero-shot baseline against dense, sparse, hybrid, behavior-based,
 and contrastive retrieval.
 
-For the controlled Llama suite, three conclusions appear robust. Any code-level retrieval is a large win,
+For the controlled Llama suite, three conclusions emerge. Any code-level retrieval is a large win,
 lifting malicious-class F1 from 0.888 to 0.97, mostly through recall. The
 mechanism matters surprisingly little: plain BM25 matches a 4B embedding
 retriever within 0.4 F1 points, so sparse retrieval is a strong, low-cost
 default. And contrastive retrieval offers a favorable precision/recall
 trade-off: retrieving benign counterexamples cuts the false-positive rate to
 0.1\% at 0.948 recall. Conversely, reducing queries to AST behavior summaries
-is counterproductive (F1 0.878), demonstrating that signal loss in query
-construction, not retrieval per se, is where methods fail.
+is counterproductive (F1 0.878), suggesting that, in our setting, query
+construction rather than retrieval itself was the limiting factor.
 
 We also evaluated two no-retrieval Jev comparators using the same source-only
 test inputs. Direct Jev reaches malicious F1 of 0.960, exceeding the Llama
@@ -26,10 +26,10 @@ The tested two-stage behavior-guided Jev variant does not improve direct Jev
 typed-decision interface generally replaces retrieval or a controlled
 cross-model ranking.
 
-We also documented the residual failures that no retrieval over
-\texttt{setup.py} can fix---metadata-cloned typosquats---and the recurring
-false positives over security-adjacent legitimate packages, as guidance for
-the next generation of designs, which should extend evidence beyond a single
-file, add name-level signals, and calibrate retrieval toward triage
-workflows.
+We also documented the residual failures that retrieval over
+\texttt{setup.py} alone did not resolve---metadata-cloned typosquats---and
+the recurring false positives over security-adjacent legitimate packages, as
+guidance for the next generation of designs, which may benefit from
+extending evidence beyond a single file, adding name-level signals, and
+calibrating retrieval toward triage workflows.
 \endinput

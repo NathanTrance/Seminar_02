@@ -50,14 +50,14 @@ packages of a standard malicious/benign PyPI benchmark. Our main findings
 for this controlled Llama retrieval suite are:
 
 \begin{itemize}
-    \item Code-level retrieval substantially improves detection over the
+    \item Code-level retrieval improves detection over the
     no-retrieval baseline, driven by a large recall gain.
-    \item Sparse retrieval performs on par with dense retrieval, at a
+    \item Sparse retrieval performs comparably to dense retrieval, at a
     fraction of the infrastructure cost.
     \item Contrastive retrieval, which shows the model both malicious and
-    benign reference examples, sharply reduces false alarms.
-    \item Retrieval over AST-derived behavior summaries is lossy and hurts
-    performance, falling below the no-retrieval baseline.
+    benign reference examples, reduces false alarms.
+    \item Retrieval over AST-derived behavior summaries lowers F1 below the
+    no-retrieval baseline.
 \end{itemize}
 
 We additionally report two no-retrieval Jev comparators: a direct typed
