@@ -43,17 +43,17 @@ checker built on Python's \texttt{ast} module, which flags shell execution,
 process creation, network access, file writes/deletion, dynamic execution,
 environment access, base64 decoding, remote download, and persistence.
 Free-form behavior names produced by the model are keyword-normalized to this
-vocabulary; a claim is \emph{supported} when the corresponding static flag is
+vocabulary; a claim is supported when the corresponding static flag is
 present on any line of the target. We report the unsupported-claim rate
 $= \mathrm{unsupported} / \mathrm{claimed}$, behavior precision, and behavior
 recall. Because static analysis is neither sound nor complete on obfuscated
-code, we treat these figures as an \emph{automated static-grounding proxy},
+code, we treat these figures as an automated static-grounding proxy,
 not as hallucination ground truth. Direct Jev has no generated behavior claims
 or citations, so this faithfulness metric is not applicable to it.
 Behavior-guided Jev instead yields typed behavior predictions; its comparison
 with static flags is reported separately as typed behavior alignment.
 For behavior-guided Jev, the same formulas compare its thresholded typed
-behavior predictions with the static flags. We call this \emph{typed behavior
-alignment}, rather than explanation faithfulness, because Jev provides neither
+behavior predictions with the static flags. We call this typed behavior
+alignment, rather than explanation faithfulness, because Jev provides neither
 free-form behavior explanations nor source citations.
 \endinput

@@ -27,6 +27,8 @@ report/ease-template/*.lot
 report/ease-template/*.fls
 report/ease-template/*.fdb_latexmk
 report/ease-template/*.synctex.gz
+report/ease-template/*.xdv
+report/ease-template/*.xdv.gz
 report/ease-template/*.cut
 
 # --- Experiment logs & superseded archives ---

@@ -66,7 +66,7 @@ echo "✓ Compilation complete: ${OUTPUT_NAME}.pdf"
 # Clean auxiliary files if requested
 if [ "$ACTION" = "clean" ] || [ "$MODE" = "clean" ]; then
     echo "Cleaning auxiliary files..."
-    rm -f *.aux *.bbl *.blg *.log *.out *.toc *.lof *.lot *.fls *.fdb_latexmk *.synctex.gz
+    rm -f *.aux *.bbl *.blg *.log *.out *.toc *.lof *.lot *.fls *.fdb_latexmk *.synctex.gz *.xdv *.xdv.gz
     echo "✓ Cleaned"
 fi
 
