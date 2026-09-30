@@ -57,26 +57,27 @@ vocabulary and 0.5 threshold do not add useful classification signal here.
 \subsection{Limitations}
 \label{sec:limitations}
 
-Our work has several limitations:
-\begin{itemize}
-    \item \textbf{Controlled single-model retrieval ablation.} The controlled
-    retrieval findings are for one generator (\texttt{Llama-3.1-8B-Instruct})
-    and one benchmark. Jev adds an externally served model-family comparator,
-    but we did not repeat the retrieval ablation across multiple generators.
-    \item \textbf{Single file granularity.} Analysis is limited to
-    \texttt{setup.py}. Malware hidden in auxiliary files is invisible to every
-    method tested, which partly explains the samples no method detects.
-    \item \textbf{Fixed retrieval settings.} We fix $k=3$ (per the reference
-    design); a full $k\in\{1,3,5\}$ sweep and corpus-side ablations (e.g.,
-    leaving retrieved documents unlabeled) remain for future work.
-    \item \textbf{AST-based query extraction is unrefined.} Our behavior
-    summaries are simple import/call inventories; a richer, security-focused
-    static analyzer might restore some of the lost signal.
-    \item \textbf{Jev prompt and threshold dependence.} The behavior-guided
-    result depends on one typed behavior vocabulary, one 0.5 threshold, and
-    two-stage prompting. Its typed behavior alignment is not equivalent to
-    source-grounded explanation faithfulness.
-\end{itemize}
+\paragraph{Controlled single-model retrieval ablation.} The controlled
+retrieval findings are for one generator (\texttt{Llama-3.1-8B-Instruct})
+and one benchmark. Jev adds an externally served model-family comparator,
+but we did not repeat the retrieval ablation across multiple generators.
+
+\paragraph{Single file granularity.} Analysis is limited to
+\texttt{setup.py}. Malware hidden in auxiliary files is invisible to every
+method tested, which partly explains the samples no method detects.
+
+\paragraph{Fixed retrieval settings.} We fix $k=3$ (per the reference
+design); a full $k\in\{1,3,5\}$ sweep and corpus-side ablations (e.g.,
+leaving retrieved documents unlabeled) remain for future work.
+
+\paragraph{AST-based query extraction is unrefined.} Our behavior
+summaries are simple import/call inventories; a richer, security-focused
+static analyzer might restore some of the lost signal.
+
+\paragraph{Jev prompt and threshold dependence.} The behavior-guided
+result depends on one typed behavior vocabulary, one 0.5 threshold, and
+two-stage prompting. Its typed behavior alignment is not equivalent to
+source-grounded explanation faithfulness.
 
 \subsection{Threats to Validity}
 \label{sec:threats}
