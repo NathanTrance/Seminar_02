@@ -21,37 +21,106 @@ Figure~\ref{fig:pipeline} illustrates the pipeline.
 \begin{figure*}[!ht]
     \centering
     \begin{tikzpicture}[
-        node distance=6mm,
-        box/.style={rectangle, rounded corners=2pt, draw=black!60, fill=gray!10,
-                    minimum height=8mm, align=center, font=\scriptsize,
-                    inner sep=3pt},
-        arr/.style={-{Stealth[length=2.5mm]}, thick, black!70},
+        font=\scriptsize,
+        >={Stealth[length=2.2mm]},
+        box/.style={rounded corners=3pt, draw=#1!65!black, fill=#1!10,
+            thick, align=center, inner sep=4pt, minimum height=10mm,
+            blur shadow={shadow blur steps=5, shadow xshift=0.9pt,
+                         shadow yshift=-0.9pt}},
+        box/.default=blue,
+        cyl/.style={cylinder, shape border rotate=90, aspect=0.28,
+            draw=green!50!black, fill=green!10, thick, align=center,
+            inner sep=3pt, minimum width=26mm, minimum height=20mm,
+            blur shadow={shadow blur steps=5, shadow xshift=0.9pt,
+                         shadow yshift=-0.9pt}},
+        arr/.style={->, thick, black!55},
+        arrd/.style={->, thick, dashed, black!55},
+        pnl/.style={rounded corners=5pt, draw=#1!40, fill=#1!4, thick},
+        pnl/.default=gray,
+        ic/.style={font=\normalsize},
     ]
-    \node[box] (target) {Target package \\ \texttt{setup.py}};
-    \node[box, right=of target] (num) {Line-numbered \\ source};
-    \node[box, below=of num] (beh) {AST behavior \\ summary};
-    \node[box, right=of num] (ret) {Retriever \\ dense / BM25 / hybrid / contrastive};
-    \node[box, above=of ret] (kb) {Knowledge base \\ mal. + ben. train examples};
-    \node[box, right=of ret] (prompt) {Prompt builder \\ evidence + target};
-    \node[box, right=of prompt] (llm) {LLM \\ (Llama-3.1-8B)};
-    \node[box, right=of llm] (out) {Structured verdict \\ \{label, conf, behaviors\}};
-    \draw[arr] (target) -- (num);
-    \draw[arr] (num) -- (ret);
-    \draw[arr] (num) -- (beh);
-    \draw[arr] (beh) -- (ret);
-    \draw[arr] (kb) -- (ret);
-    \draw[arr] (ret) -- (prompt);
-    \draw[arr] (num) to[out=25, in=155] (prompt);
-    \draw[arr] (prompt) -- (llm);
-    \draw[arr] (llm) -- (out);
+        % ---------- input ----------
+        \node[box=teal] (pkg) at (0,0)
+            {{\normalsize\color{teal!60!black}\faFileCode}\\[0.4mm]
+             target \texttt{setup.py}};
+        \node[box=teal] (num) at (2.6,0)
+            {{\normalsize\color{teal!60!black}\faListOl}\\[0.4mm]
+             line-numbered source};
+        \draw[arr] (pkg) -- (num);
+
+        % ---------- query representations ----------
+        \node[box=orange] (q) at (5.0,0.95)
+            {{\normalsize\color{orange!75!black}\faCode}\\[0.4mm]
+             raw-code query};
+        \node[box=orange] (b) at (5.0,-1.05)
+            {{\normalsize\color{orange!75!black}\faStream}\\[0.4mm]
+             behavior summary};
+        \draw[arr]  (num) -- (q);
+        \draw[arrd] (num) -- (b);
+
+        % ---------- retrieval ----------
+        \node[box=orange] (ret) at (7.8,-0.05)
+            {{\normalsize\color{orange!75!black}\faSearch}\\[0.4mm]
+             retriever\\[-0.3mm]
+             {\tiny dense / BM25 / hybrid / contrastive}};
+        \node[cyl] (kb) at (7.8,2.3)
+            {{\normalsize\color{green!50!black}\faDatabase}\\[0.4mm]
+             knowledge base\\[-0.3mm]
+             {\tiny malicious + benign}};
+        \draw[arr]  (q) -- (ret);
+        \draw[arrd] (b) -- (ret);
+        \draw[arr]  (kb) -- (ret);
+
+        % ---------- generation ----------
+        \node[box=violet] (pr) at (10.55,-0.05)
+            {{\normalsize\color{violet!80!black}\faClipboardList}\\[0.4mm]
+             prompt builder\\[-0.3mm]
+             {\tiny evidence + target}};
+        \node[box=violet] (llm) at (12.85,-0.05)
+            {{\normalsize\color{violet!80!black}\faRobot}\\[0.4mm]
+             \texttt{Llama-3.1-8B}};
+        \node[box=green!60!black] (out) at (15.4,-0.05)
+            {{\normalsize\color{green!45!black}\faClipboardCheck}\\[0.4mm]
+             structured verdict\\[-0.3mm]
+             {\tiny label, confidence,}\\[-0.2mm]
+             {\tiny behaviors}};
+        \draw[arr] (ret) -- (pr);
+        \draw[arr] (pr) -- (llm);
+        \draw[arr] (llm) -- (out);
+        \draw[arr] (num.north) -- ++(0,3.6) -|
+            node[pos=0.34, above, font=\scriptsize\itshape, text=black!60]
+            {target}
+            (pr.north);
+
+        % ---------- stage panels ----------
+        \begin{scope}[on background layer]
+            \node[pnl=teal, fit=(pkg)(num), inner sep=6pt] (pin) {};
+            \node[pnl=orange, fit=(q)(b)(ret)(kb), inner sep=6pt] (pret) {};
+            \node[pnl=violet, fit=(pr)(llm)(out), inner sep=6pt] (pgen) {};
+        \end{scope}
+        \node[anchor=north west, font=\scriptsize\bfseries, text=teal!55!black]
+            at ([xshift=2pt, yshift=-1pt]pin.north west) {input};
+        \node[anchor=north west, font=\scriptsize\bfseries, text=orange!70!black]
+            at ([xshift=2pt, yshift=-1pt]pret.north west) {retrieval};
+        \node[anchor=north west, font=\scriptsize\bfseries, text=violet!80!black]
+            at ([xshift=2pt, yshift=-1pt]pgen.north west) {generation};
+
+        % ---------- note ----------
+        \node[font=\scriptsize\itshape, text=black!60, align=center,
+              text width=150mm]
+            at (8.0,-3.5) {Every configuration uses the same generator, prompt, and
+            knowledge base; the no-RAG baseline skips retrieval, and
+            behavior-based configurations use the dashed path.};
     \end{tikzpicture}
-    \caption{Overview of the seven controlled Llama retrieval configurations. All stages are shared across
-    methods except query construction and retrieval (the behavior-based
-    methods additionally build an AST behavior summary as the query).}
+    \caption{Overview of the evaluated pipeline. Every configuration shares
+    the same input, retrieval, and generation stages; only the query
+    representation and retriever vary. Contrastive configurations retrieve
+    from both the malicious and benign pools.}
     \label{fig:pipeline}
-    \Description{Llama retrieval pipeline with target package input, line numbering,
-    optional AST behavior summary, retrieval from a knowledge base, prompt
-    construction, an LLM call, and a structured verdict output.}
+    \Description{Pipeline figure: the target package source is line-numbered,
+    optionally summarized into AST behaviors, retrieved against a knowledge
+    base of malicious and benign training examples, inserted into a prompt,
+    and classified by Llama-3.1-8B into a structured verdict.}
 \end{figure*}
 
 \subsection{Retrieval Strategies}
