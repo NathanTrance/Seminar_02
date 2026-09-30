@@ -95,7 +95,8 @@ Table~\ref{tab:faithfulness} reports the static-grounding proxy computed by
 keyword-normalizing the model's free-form behavior claims to our static
 vocabulary and checking each against \texttt{ast}-derived behavior flags.
 Direct Jev returns a typed classification without behavior claims or source
-citations, so its faithfulness statistics are not applicable. Behavior-guided
+citations, so its faithfulness statistics are not applicable and it is
+omitted from the table. Behavior-guided
 Jev does return typed behavior probabilities; its row is typed behavior
 alignment rather than free-form explanation faithfulness and is therefore not
 directly comparable with the Llama rows.
@@ -127,7 +128,6 @@ model to security-relevant vocabulary.
         Behavior       & 526 & \textbf{0.593} & 0.387 & \textbf{0.531} \\
         Contrastive    & 455 & 0.615 & \textbf{0.421} & 0.457 \\
         Beh.\ + Contr. & 697 & 0.694 & 0.289 & 0.543 \\
-        Jev (direct)   & N/A & N/A & N/A & N/A \\
         Jev (beh.-guided)$^{\dagger}$ & 1{,}613 & 0.747 & 0.202 & 0.927 \\
         \bottomrule
     \end{tabular}
