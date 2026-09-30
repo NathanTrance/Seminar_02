@@ -85,31 +85,24 @@ source-grounded explanation faithfulness.
 \subsection{Threats to Validity}
 \label{sec:threats}
 
-\paragraph{Internal.} Prompt wording is confounded with method (evidence
-blocks differ). We mitigated this through one shared system prompt, common
-output schema, stable document identifiers, and identical decoding
-parameters within the Llama suite. The Jev comparison has a distinct typed
-output interface and provider, so it is not controlled for these factors.
-Faithfulness scoring is an automated proxy: keyword
-normalization and AST detection are neither sound nor complete, so grounding
-numbers should be read comparatively, not absolutely. Parse failures were
-excluded from metric denominators and reported as coverage to avoid silently
-dropping or crediting failed samples.
+\paragraph{Internal.} Evidence blocks differ across methods, but all Llama
+configurations share one system prompt, output schema, and decoding
+parameters; the Jev comparison is not controlled in the same way.
+Faithfulness scoring is an automated proxy and should be read
+comparatively, and parse failures are excluded from metric denominators and
+reported as coverage.
 
-\paragraph{Construct.} ``Ground-truth'' labels originate from the reference
-dataset; samples whose code could not be extracted (9/1029) were removed,
-which slightly privileges clean verifiable cases. Classification error is
-kept distinct from explanatory hallucination: we score the verdict against
-the label and score the explanation separately against static evidence. Direct
-Jev has no explanation to score; behavior-guided Jev is evaluated as typed
-behavior alignment rather than explanation faithfulness.
+\paragraph{Construct.} Labels come from the reference dataset, and samples
+with unevaluable code (9/1029) were removed, slightly privileging clean
+cases. We score verdicts against labels and explanations separately against
+static evidence; for Jev we report typed behavior alignment rather than
+explanation faithfulness.
 
-\paragraph{External.} The malicious population is largely typosquats from a
-specific observation period; findings may not transfer to other attack
-families, registries, or later temporal windows. We therefore treat the study
-as a controlled Llama retrieval comparison rather than an absolute capability
-claim. The Jev outcomes also depend on the recorded provider/model version and
-should not be generalized across Jev releases or providers.
+\paragraph{External.} The malicious population is largely typosquats from
+one observation period, so findings may not transfer to other attack
+families or later windows, and Jev results are tied to the recorded
+provider and model version. We treat the study as a controlled comparison,
+not an absolute capability claim.
 
 \subsection{Data and Code Availability}
 \label{sec:avail}
