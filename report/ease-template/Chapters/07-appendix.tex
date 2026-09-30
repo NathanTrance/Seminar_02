@@ -106,7 +106,19 @@ AST-derived behavior summary---with the remaining wording unchanged.
 
 \subsection{Jev Typed-Decision Requests}
 
-Jev requests provide a state and typed questions rather than chat messages.
+Jev is the first publicly released \emph{System One} model by TypeSafe
+AI~\cite{typesafe2026jev}. System One models return typed, calibrated
+decisions instead of generated text: the caller supplies a state together
+with typed questions, and the model evaluates all questions in a single
+round trip. Three question primitives are available: \emph{choice} selects
+one option from a closed set and returns a probability distribution plus a
+confidence score; \emph{score} places the input on an ordered scale; and
+\emph{noul} answers a yes/no question with a calibrated probability. Because
+answers are locked to a declared type and evaluated in parallel rather than
+generated token by token, responses cannot be malformed, decisions return in
+tens to hundreds of milliseconds, and confidences are trained for
+calibration rather than verbalized.
+
 The direct comparator asks a single choice question over the supplied source;
 the behavior-guided comparator first asks 12 typed yes/no behavior questions
 with a $0.5$ presence threshold, then passes the full probability vector to a

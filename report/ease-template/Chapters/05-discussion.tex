@@ -108,21 +108,6 @@ as a controlled Llama retrieval comparison rather than an absolute capability
 claim. The Jev outcomes also depend on the recorded provider/model version and
 should not be generalized across Jev releases or providers.
 
-\subsection{Future Work}
-\label{sec:future-work}
-
-Three directions follow directly. First, replicate over a model panel
-(2--4 generators) and a second dataset (e.g., \texttt{LAMPS} D1) to test
-whether strategy rankings generalize, including the same retrieval conditions
-across model families. Second, extend detection beyond
-\texttt{setup.py}: to whole-package multi-file evidence and, for the
-typosquat class that defeats every method here, to package-name similarity
-features. Third, bring the evidence pipeline closer to production:
-cross-dataset and temporal splits of the knowledge base, higher $k$ with
-LLM-based relevance filtering cascades in the spirit of
-CRAG~\cite{crag2024}, and a deployed triage evaluation weighting FPR over
-retrieval efficiency. Finally, test direct and behavior-guided Jev across
-behavior vocabularies and calibrated thresholds.
 \subsection{Data and Code Availability}
 \label{sec:avail}
 

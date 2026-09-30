@@ -59,8 +59,11 @@ Figure~\ref{fig:pipeline} illustrates the pipeline.
 
 The seven Llama methods share the same knowledge base: the raw
 \texttt{setup.py} sources of the training packages, indexed in separate
-malicious and benign pools. We fix the number of retrieved documents to $k=3$.
-The seven Llama methods are:
+malicious and benign pools. For single-pool retrieval methods, we retrieve
+$k=3$ examples. Contrastive retrieval retrieves $k=3$ examples from each
+class, resulting in six retrieved examples; the contrastive condition
+therefore also has a larger evidence budget, even though the generator and
+decoding configuration are fixed. The seven Llama methods are:
 
 \begin{itemize}
     \item \textbf{No RAG.} The target source is classified directly,
@@ -108,19 +111,10 @@ embedded in the prompt. The output schema is enforced as JSON and requires
 \subsection{Jev No-Retrieval Comparators}
 \label{sec:jev-method}
 
-Jev is the first publicly released \emph{System One} model by TypeSafe
-AI~\cite{typesafe2026jev}. System One models are a model class designed to
-return typed, calibrated decisions instead of generated text: the caller
-supplies a state (the input data) together with a set of typed questions, and
-the model evaluates all questions in a single round trip. Three question
-primitives are available: \emph{choice} selects one option from a closed set
-and returns a probability distribution over the options plus a confidence
-score; \emph{score} places the input on an ordered scale; and \emph{noul}
-answers a yes/no question with a calibrated probability. Because every answer
-is locked to a declared type and questions are evaluated in parallel rather
-than generated token by token, responses cannot be malformed or off-schema,
-decisions return in tens to hundreds of milliseconds, and the reported
-confidences are trained for calibration rather than verbalized. We access Jev
+Jev is a \emph{System One} model by TypeSafe AI~\cite{typesafe2026jev}:
+instead of generating text, it returns typed, calibrated answers to typed
+questions supplied with a state. Appendix~\ref{app:prompts} details the model
+class, its question primitives, and the exact request shapes; we access it
 through OpenRouter~\cite{openrouterjev} under the pinned identifier
 \texttt{typesafe/jev-1.13}.
 
