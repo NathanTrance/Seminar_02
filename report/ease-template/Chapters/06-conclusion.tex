@@ -3,33 +3,22 @@
 
 This paper asked what retrieval strategy, if any, best supports LLM-based
 detection of malicious PyPI packages. Using the dataset of
-Ibiyo et al.~\cite{ease2025rag} and a fixed
-\texttt{Llama-3.1-8B-Instruct} generator, and a code-only knowledge base, we
-compared a zero-shot baseline against dense, sparse, hybrid, behavior-based,
-and contrastive retrieval.
+Ibiyo et al.~\cite{ease2025rag}, a fixed \texttt{Llama-3.1-8B-Instruct}
+generator, and a code-only knowledge base, we compared a zero-shot baseline
+against dense, sparse, hybrid, behavior-based, and contrastive retrieval.
 
-For the controlled Llama suite, three conclusions emerge. Any code-level retrieval is a large win,
-lifting malicious-class F1 from 0.888 to 0.97, mostly through recall. The
-mechanism matters surprisingly little: plain BM25 matches a 4B embedding
-retriever within 0.4 F1 points, so sparse retrieval is a strong, low-cost
-default. And contrastive retrieval offers a favorable precision/recall
-trade-off: retrieving benign counterexamples cuts the false-positive rate to
-0.1\% at 0.948 recall. Conversely, reducing queries to AST behavior summaries
-is counterproductive (F1 0.878), suggesting that, in our setting, query
-construction rather than retrieval itself was the limiting factor.
+For the controlled Llama suite, three conclusions emerge: code-level
+retrieval is a large win (malicious-class F1 from 0.888 to 0.97, mostly
+through recall); plain BM25 matches a 4B embedding retriever within 0.4 F1
+points; and contrastive retrieval cuts the false-positive rate to 0.1\% at
+0.948 recall. Reducing queries to AST behavior summaries is counterproductive
+(F1 0.878), suggesting that query construction, not retrieval itself, was the
+limiting factor in our setting.
 
-We also evaluated two no-retrieval Jev comparators using the same source-only
-test inputs. Direct Jev reaches malicious F1 of 0.960, exceeding the Llama
-no-RAG baseline but remaining below the best retrieved Llama configuration.
-The tested two-stage behavior-guided Jev variant does not improve direct Jev
-(F1 0.954). These are external model-family comparisons, not evidence that a
-typed-decision interface generally replaces retrieval or a controlled
-cross-model ranking.
-
-We also documented the residual failures that retrieval over
-\texttt{setup.py} alone did not resolve---metadata-cloned typosquats---and
-the recurring false positives over security-adjacent legitimate packages, as
-guidance for the next generation of designs, which may benefit from
-extending evidence beyond a single file, adding name-level signals, and
-calibrating retrieval toward triage workflows.
+As a side exploration, the typed-decision model Jev performs competitively
+without retrieval (F1 0.960) but does not reach the strongest retrieved
+configuration. The residual failures we documented---metadata-cloned
+typosquats and false positives on security-adjacent benign
+packages---indicate that pipelines restricted to \texttt{setup.py} may
+benefit from name-level signals and additional evidence.
 \endinput

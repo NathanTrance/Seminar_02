@@ -2,6 +2,9 @@
 
 # EASE Paper Compilation Script
 # Usage: ./compile.sh [submission|camera-ready] [clean]
+#
+# Uses XeLaTeX so Unicode author names (e.g., Vietnamese diacritics)
+# render correctly.
 
 set -e
 
@@ -40,16 +43,16 @@ echo "Using main file: $MAIN_FILE"
 echo "Output will be: ${OUTPUT_NAME}.pdf"
 echo ""
 
-# Compile with latexmk (recommended) or fallback to pdflatex+bibtex
+# Compile with latexmk (recommended) or fallback to xelatex+bibtex
 if command -v latexmk &> /dev/null; then
-    echo "Using latexmk for compilation..."
-    latexmk -pdf -interaction=nonstopmode -output-directory=. "$MAIN_FILE"
+    echo "Using latexmk (XeLaTeX) for compilation..."
+    latexmk -xelatex -interaction=nonstopmode -output-directory=. "$MAIN_FILE"
 else
-    echo "Using pdflatex + bibtex (latexmk not found)..."
-    pdflatex -interaction=nonstopmode "$MAIN_FILE"
+    echo "Using xelatex + bibtex (latexmk not found)..."
+    xelatex -interaction=nonstopmode "$MAIN_FILE"
     bibtex "${MAIN_FILE%.tex}"
-    pdflatex -interaction=nonstopmode "$MAIN_FILE"
-    pdflatex -interaction=nonstopmode "$MAIN_FILE"
+    xelatex -interaction=nonstopmode "$MAIN_FILE"
+    xelatex -interaction=nonstopmode "$MAIN_FILE"
 fi
 
 # Rename output if needed
