@@ -18,7 +18,7 @@ findings stand out.
         \toprule
         \textbf{Method} & \multicolumn{3}{c}{\textbf{Malicious}} & \multicolumn{3}{c}{\textbf{Benign}} & \multicolumn{2}{c}{\textbf{Overall}} \\
         \cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-9}
-        & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} & \textbf{BAcc} & \textbf{FPR} \\
+        & \textbf{Precision}~$\uparrow$ & \textbf{Recall}~$\uparrow$ & \textbf{F1 Score}~$\uparrow$ & \textbf{Precision}~$\uparrow$ & \textbf{Recall}~$\uparrow$ & \textbf{F1 Score}~$\uparrow$ & \textbf{BAcc}~$\uparrow$ & \textbf{FPR}~$\downarrow$ \\
         \midrule
         No RAG           & \textbf{1.000} & 0.798 & 0.888 & 0.948 & \textbf{1.000} & 0.973 & 0.899 & \textbf{0.0\%} \\
         Dense            & 0.972 & \textbf{0.972} & \textbf{0.972} & \textbf{0.991} & 0.991 & \textbf{0.991} & \textbf{0.981} & 0.9\% \\
@@ -117,9 +117,10 @@ model to security-relevant vocabulary.
     statically observed behaviors.}
     \label{tab:faithfulness}
     \centering
+    \setlength{\tabcolsep}{4pt}
     \begin{tabular}{lrrrr}
         \toprule
-        \textbf{Method} & \textbf{Claims} & \textbf{Unsup.} & \textbf{Beh.~P} & \textbf{Beh.~R} \\
+        \textbf{Method} & \textbf{Claims} & \textbf{Unsup.}~$\downarrow$ & \textbf{Beh.~P}~$\uparrow$ & \textbf{Beh.~R}~$\uparrow$ \\
         \midrule
         No RAG         & 427 & 0.717 & 0.282 & 0.427 \\
         Dense          & 560 & 0.657 & 0.312 & 0.521 \\
